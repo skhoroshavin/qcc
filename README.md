@@ -1,2 +1,2 @@
-# qcc
+# QCC
 QuickCheck for C
