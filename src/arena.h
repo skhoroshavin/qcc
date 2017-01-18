@@ -2,6 +2,7 @@
 #pragma once
 
 #include <memory.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,6 +27,8 @@ void qcc_arena_init(struct qcc_arena *arena, size_t max_size);
 void qcc_arena_done(struct qcc_arena *arena);
 void *qcc_arena_alloc(struct qcc_arena *arena, size_t size,
                       qcc_destroy_fn dtor);
+const char *qcc_arena_vsprintf(struct qcc_arena *arena, const char *fmt,
+                               va_list args);
 const char *qcc_arena_sprintf(struct qcc_arena *arena, const char *fmt, ...);
 void qcc_arena_reset(struct qcc_arena *arena);
 

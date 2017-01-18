@@ -49,9 +49,10 @@ void qcc_test_main(struct qcc_test_stats *_stats);
     {                                                                          \
         if (!(cond))                                                           \
         {                                                                      \
-            qcc_test_context_fail(                                             \
-                _ctx, "Assertion \"%s\" failed in %s (%s, line %d)\n", #cond,  \
-                __FUNCTION__, __FILE__, __LINE__);                             \
+            _ctx->result = QCC_TEST_SKIP;                                      \
+            _ctx->error = qcc_arena_sprintf(                                   \
+                &_ctx->arena, "Assertion \"%s\" failed in %s (%s, line %d)\n", \
+                #cond, __FUNCTION__, __FILE__, __LINE__);                      \
             return;                                                            \
         }                                                                      \
     } while (0)
@@ -61,8 +62,9 @@ void qcc_test_main(struct qcc_test_stats *_stats);
     {                                                                          \
         if (strcmp(got, expected) != 0)                                        \
         {                                                                      \
-            qcc_test_context_fail(                                             \
-                _ctx,                                                          \
+            _ctx->result = QCC_TEST_SKIP;                                      \
+            _ctx->error = qcc_arena_sprintf(                                   \
+                &_ctx->arena,                                                  \
                 "Assertion \"%s\" == \"%s\" failed in %s (%s, line %d)\n",     \
                 (got), (expected), __FUNCTION__, __FILE__, __LINE__);          \
             return;                                                            \

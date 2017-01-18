@@ -17,14 +17,12 @@ enum qcc_test_result
 struct qcc_test_context
 {
     enum qcc_test_result result;
-    char *error;
+    const char *error;
     struct qcc_arena arena;
 };
 
 void qcc_test_context_init(struct qcc_test_context *ctx);
 void qcc_test_context_done(struct qcc_test_context *ctx);
-
-void qcc_test_context_fail(struct qcc_test_context *ctx, const char *fmt, ...);
 
 #ifdef __cplusplus
 }

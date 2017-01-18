@@ -19,8 +19,8 @@ void qcc_arena_done(struct qcc_arena *arena)
     free(arena->objects);
 }
 
-static void _qcc_arena_push_back(struct qcc_arena *arena, void *ptr,
-                                 qcc_destroy_fn dtor)
+static void _arena_push_back(struct qcc_arena *arena, void *ptr,
+                             qcc_destroy_fn dtor)
 {
     arena->objects[arena->size].ptr = ptr;
     arena->objects[arena->size].dtor = dtor;
@@ -32,11 +32,12 @@ void *qcc_arena_alloc(struct qcc_arena *arena, size_t size, qcc_destroy_fn dtor)
     if (arena->size == arena->max_size) return 0;
 
     void *ptr = malloc(size);
-    _qcc_arena_push_back(arena, ptr, dtor);
+    _arena_push_back(arena, ptr, dtor);
     return ptr;
 }
 
-const char *qcc_arena_sprintf(struct qcc_arena *arena, const char *fmt, ...)
+const char *qcc_arena_vsprintf(struct qcc_arena *arena, const char *fmt,
+                               va_list args)
 {
     if (arena->size == arena->max_size) return 0;
 
@@ -45,18 +46,28 @@ const char *qcc_arena_sprintf(struct qcc_arena *arena, const char *fmt, ...)
 
     while (1)
     {
-        va_list args;
-        va_start(args, fmt);
-        unsigned real_len = vsnprintf(str, len, fmt, args);
-        va_end(args);
+        va_list tmp;
+        va_copy(tmp, args);
+        unsigned real_len = vsnprintf(str, len, fmt, tmp);
+        va_end(tmp);
 
-        if (real_len < len) break;
+        if (len > real_len) break;
 
-        len *= 2;
+        len = real_len + 1;
         str = realloc(str, len);
     }
 
-    _qcc_arena_push_back(arena, str, 0);
+    _arena_push_back(arena, str, 0);
+    return str;
+}
+
+const char *qcc_arena_sprintf(struct qcc_arena *arena, const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    const char *str = qcc_arena_vsprintf(arena, fmt, args);
+    va_end(args);
+
     return str;
 }
 
