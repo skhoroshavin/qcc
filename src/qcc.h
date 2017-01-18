@@ -62,7 +62,8 @@ void qcc_test_main(struct qcc_test_stats *_stats);
         if (strcmp(got, expected) != 0)                                        \
         {                                                                      \
             qcc_test_context_fail(                                             \
-                _ctx, "Assertion \"%s == %s\" failed in %s (%s, line %d)\n",   \
+                _ctx,                                                          \
+                "Assertion \"%s\" == \"%s\" failed in %s (%s, line %d)\n",     \
                 (got), (expected), __FUNCTION__, __FILE__, __LINE__);          \
             return;                                                            \
         }                                                                      \
