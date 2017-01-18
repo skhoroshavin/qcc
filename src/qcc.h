@@ -4,6 +4,10 @@
 #include "test_context.h"
 #include <memory.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 struct qcc_test_stats
 {
     int total;
@@ -63,3 +67,7 @@ void qcc_test_main(struct qcc_test_stats *_stats);
             return;                                                            \
         }                                                                      \
     } while (0)
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus

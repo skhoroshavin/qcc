@@ -3,6 +3,10 @@
 
 #include <memory.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 typedef void (*qcc_destroy_fn)(void *);
 
 struct qcc_arena_obj
@@ -23,3 +27,7 @@ void qcc_arena_done(struct qcc_arena *arena);
 void *qcc_arena_alloc(struct qcc_arena *arena, size_t size,
                       qcc_destroy_fn dtor);
 void qcc_arena_reset(struct qcc_arena *arena);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
