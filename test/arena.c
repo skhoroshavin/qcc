@@ -28,6 +28,23 @@ TEST(arena_alloc)
     qcc_arena_done(&arena);
 }
 
+TEST(arena_sprintf)
+{
+    struct qcc_arena arena;
+    qcc_arena_init(&arena, 1024);
+
+    const char *str =
+        qcc_arena_sprintf(&arena, "string: %s, number: %d", "Hello", 42);
+
+    ASSERT(str != 0);
+    ASSERT_STR_EQ(str, "string: Hello, number: 42");
+    ASSERT(arena.objects != 0);
+    ASSERT(arena.size == 1);
+    ASSERT(arena.max_size == 1024);
+
+    qcc_arena_done(&arena);
+}
+
 static void *test_ptr;
 static void test_dtor(void *ptr) { test_ptr = ptr; }
 
@@ -51,5 +68,6 @@ TEST_SUITE(arena)
 {
     RUN_TEST(empty_arena);
     RUN_TEST(arena_alloc);
+    RUN_TEST(arena_sprintf);
     RUN_TEST(arena_reset);
 }
