@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "arena.h"
+
 enum qcc_test_result
 {
     QCC_TEST_SUCCEED = 0,
@@ -12,6 +14,7 @@ struct qcc_test_context
 {
     enum qcc_test_result result;
     char *error;
+    struct qcc_arena arena;
 };
 
 void qcc_test_context_init(struct qcc_test_context *ctx);

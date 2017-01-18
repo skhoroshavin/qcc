@@ -21,7 +21,7 @@ void qcc_run_suite(struct qcc_test_stats *stats, const char *name,
                    qcc_suite_fn suite_fn);
 int qcc_main(int argc, const char *argv[]);
 
-#define TEST(name) void name(struct qcc_test_context *_ctx)
+#define TEST(name) static void name(struct qcc_test_context *_ctx)
 #define RUN_TEST(name) qcc_run_test(_stats, #name, name)
 
 #define TEST_SUITE(name) void name(struct qcc_test_stats *_stats)
