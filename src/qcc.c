@@ -11,33 +11,6 @@ void qcc_test_stats_init(struct qcc_test_stats *stats)
     stats->failing = 0;
 }
 
-void qcc_assert(struct qcc_test_context *ctx, int cond, const char *fmt, ...)
-{
-    if (cond) return;
-    ctx->result = QCC_TEST_FAIL;
-
-    unsigned msg_len = 2 * strlen(fmt);
-    ctx->message = malloc(msg_len);
-    while (1)
-    {
-        va_list args;
-        va_start(args, fmt);
-        unsigned real_len = vsnprintf(ctx->message, msg_len, fmt, args);
-        va_end(args);
-
-        if (real_len < msg_len) break;
-
-        msg_len *= 2;
-        ctx->message = realloc(ctx->message, msg_len);
-    }
-}
-
-void qcc_assume(struct qcc_test_context *ctx, int cond)
-{
-    if (cond) return;
-    ctx->result = QCC_TEST_SKIP;
-}
-
 void qcc_run_test(struct qcc_test_stats *stats, const char *name,
                   qcc_test_fn test_fn)
 {
@@ -52,7 +25,7 @@ void qcc_run_test(struct qcc_test_stats *stats, const char *name,
         break;
     case QCC_TEST_FAIL:
         printf("  %s: FAILED\n", name);
-        printf("    %s\n", ctx.message);
+        printf("    %s\n", ctx.error);
         ++stats->total;
         ++stats->failing;
         break;

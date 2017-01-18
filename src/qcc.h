@@ -30,34 +30,36 @@ int qcc_main(int argc, const char *argv[]);
 #define TEST_MAIN() void qcc_test_main(struct qcc_test_stats *_stats)
 void qcc_test_main(struct qcc_test_stats *_stats);
 
-void qcc_assert(struct qcc_test_context *ctx, int cond, const char *fmt, ...);
-void qcc_assume(struct qcc_test_context *ctx, int cond);
+#define ASSUME(cond)                                                           \
+    do                                                                         \
+    {                                                                          \
+        if (!(cond))                                                           \
+        {                                                                      \
+            ctx->result = QCC_TEST_SKIP;                                       \
+            return;                                                            \
+        }                                                                      \
+    } while (0)
 
 #define ASSERT(cond)                                                           \
     do                                                                         \
     {                                                                          \
-        qcc_assert(_ctx, cond,                                                 \
-                   "Assertion \"%s\" failed in %s (%s, line %d)\n", #cond,     \
-                   __FUNCTION__, __FILE__, __LINE__);                          \
         if (!(cond))                                                           \
+        {                                                                      \
+            qcc_test_context_fail(                                             \
+                _ctx, "Assertion \"%s\" failed in %s (%s, line %d)\n", #cond,  \
+                __FUNCTION__, __FILE__, __LINE__);                             \
             return;                                                            \
-    } while (0)
-
-#define ASSUME(cond)                                                           \
-    do                                                                         \
-    {                                                                          \
-        qcc_assume(_ctx, cond);                                                \
-        if (!(cond))                                                           \
-            return;                                                            \
+        }                                                                      \
     } while (0)
 
 #define ASSERT_STR_EQ(got, expected)                                           \
     do                                                                         \
     {                                                                          \
-        int cond = (strcmp(got, expected) == 0);                               \
-        qcc_assert(_ctx, cond,                                                 \
-                   "Assertion \"%s == %s\" failed in %s (%s, line %d)\n",      \
-                   (got), (expected), __FUNCTION__, __FILE__, __LINE__);       \
-        if (!cond)                                                             \
+        if (strcmp(got, expected) != 0)                                        \
+        {                                                                      \
+            qcc_test_context_fail(                                             \
+                _ctx, "Assertion \"%s == %s\" failed in %s (%s, line %d)\n",   \
+                (got), (expected), __FUNCTION__, __FILE__, __LINE__);          \
             return;                                                            \
+        }                                                                      \
     } while (0)
