@@ -34,6 +34,8 @@ int qcc_main(int argc, const char *argv[]);
 #define TEST_MAIN() void qcc_test_main(struct qcc_test_stats *_stats)
 void qcc_test_main(struct qcc_test_stats *_stats);
 
+#define GIVEN(type, name, ...) type name = qcc_gen_##type(_ctx, ##__VA_ARGS__)
+
 #define ASSUME(cond)                                                           \
     do                                                                         \
     {                                                                          \
