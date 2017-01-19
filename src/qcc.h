@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "test_context.h"
+#include "test_gen.h"
 #include <memory.h>
 
 #ifdef __cplusplus

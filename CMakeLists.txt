@@ -33,11 +33,9 @@ target_link_libraries(test_qcc -lqcc)
 
 add_custom_target(tests
     COMMAND cppcheck ${PROJECT_SOURCE_DIR}/src/*
+    COMMAND find CMakeFiles/qcc.dir/ -name *.gcda -type f -delete || true
+    COMMAND rm -rvf coverage*
     COMMAND valgrind ./test_qcc
     COMMAND lcov --capture --directory CMakeFiles/qcc.dir/ --output-file coverage.info
     COMMAND genhtml coverage.info --output-directory coverage
     DEPENDS test_qcc)
-
-add_custom_target(coverage_clean
-    COMMAND find CMakeFiles/qcc.dir/ -name *.gcda -type f -delete || true
-    COMMAND rm -rvf coverage*)

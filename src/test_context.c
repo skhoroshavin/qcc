@@ -16,3 +16,9 @@ void qcc_test_context_done(struct qcc_test_context *ctx)
 {
     qcc_arena_done(&ctx->arena);
 }
+
+unsigned qcc_test_context_rand(struct qcc_test_context *ctx)
+{
+    (void)ctx;
+    return rand();
+}
