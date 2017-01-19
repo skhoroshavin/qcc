@@ -55,8 +55,13 @@ const char *qcc_arena_vsprintf(struct qcc_arena *arena, const char *fmt,
     unsigned len = vsnprintf(str, qcc_arena_memory_available(arena), fmt, tmp);
     va_end(tmp);
 
-    arena->available_memory += len + 1;
-    return str;
+    if (len < qcc_arena_memory_available(arena))
+    {
+        arena->available_memory += len + 1;
+        return str;
+    }
+
+    return 0;
 }
 
 const char *qcc_arena_sprintf(struct qcc_arena *arena, const char *fmt, ...)

@@ -47,17 +47,23 @@ TEST(arena_add_object_reset)
 {
     GIVEN(unsigned, arena_size, 0, qcc_arena_object_size * 4);
     GIVEN(qcc_arena_ptr, arena, arena_size);
-    GIVEN(unsigned, alloc_size, 0, arena_size - qcc_arena_object_size);
 
     test_ptr = 0;
-    void *ptr = qcc_arena_alloc(arena, alloc_size);
-    ASSERT(ptr != 0);
-
+    void *ptr = (void *)(size_t)qcc_gen_unsigned(_ctx, 0, UINT32_MAX);
     unsigned res = qcc_arena_add_object(arena, ptr, test_dtor);
+
+    if (arena_size < qcc_arena_object_size)
+    {
+        ASSERT(!res);
+        ASSERT(test_ptr == 0);
+        ASSERT(qcc_arena_memory_available(arena) == arena_size);
+        return;
+    }
+
     ASSERT(res);
     ASSERT(test_ptr == 0);
     ASSERT(qcc_arena_memory_available(arena) ==
-           arena_size - alloc_size - qcc_arena_object_size);
+           arena_size - qcc_arena_object_size);
 
     qcc_arena_reset(arena);
     ASSERT(test_ptr == ptr);

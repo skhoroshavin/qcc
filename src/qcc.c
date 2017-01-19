@@ -16,22 +16,29 @@ void qcc_run_test(struct qcc_test_stats *stats, const char *name,
 {
     struct qcc_test_context ctx;
     qcc_test_context_init(&ctx);
-    test_fn(&ctx);
-    switch (ctx.result)
+
+    for (unsigned i = 0; i < 100; ++i)
     {
-    case QCC_TEST_SUCCEED:
+        qcc_test_context_reset(&ctx);
+        test_fn(&ctx);
+        if (ctx.result == QCC_TEST_FAIL)
+        {
+            printf("  %s: FAILED\n", name);
+            printf("    %s\n", ctx.error);
+            ++stats->total;
+            ++stats->failing;
+            break;
+        }
+
+        if (!ctx.is_randomized) break;
+    }
+
+    if (ctx.result == QCC_TEST_SUCCEED)
+    {
         printf("  %s: PASSED\n", name);
         ++stats->total;
-        break;
-    case QCC_TEST_FAIL:
-        printf("  %s: FAILED\n", name);
-        printf("    %s\n", ctx.error);
-        ++stats->total;
-        ++stats->failing;
-        break;
-    case QCC_TEST_SKIP:
-        break;
     }
+
     qcc_test_context_done(&ctx);
 }
 
