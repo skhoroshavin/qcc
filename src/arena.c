@@ -7,57 +7,55 @@
 
 void qcc_arena_init(struct qcc_arena *arena, size_t max_size)
 {
-    arena->objects =
-        (struct qcc_arena_obj *)malloc(max_size * sizeof(struct qcc_arena_obj));
-    arena->size = 0;
-    arena->max_size = max_size;
+    arena->buffer_start = malloc(max_size);
+    arena->buffer_end = arena->buffer_start + max_size;
+    arena->available_memory = arena->buffer_start;
+    arena->objects = (struct qcc_arena_object *)arena->buffer_end;
 }
 
 void qcc_arena_done(struct qcc_arena *arena)
 {
     qcc_arena_reset(arena);
-    free(arena->objects);
+    free(arena->buffer_start);
 }
 
-static void _arena_push_back(struct qcc_arena *arena, void *ptr,
-                             qcc_destroy_fn dtor)
+size_t qcc_arena_memory_available(const struct qcc_arena *arena)
 {
-    arena->objects[arena->size].ptr = ptr;
-    arena->objects[arena->size].dtor = dtor;
-    ++arena->size;
+    return (uint8_t *)arena->objects - arena->available_memory;
 }
 
-void *qcc_arena_alloc(struct qcc_arena *arena, size_t size, qcc_destroy_fn dtor)
+void *qcc_arena_alloc(struct qcc_arena *arena, size_t size)
 {
-    if (arena->size == arena->max_size) return 0;
+    if (qcc_arena_memory_available(arena) < size) return 0;
 
-    void *ptr = malloc(size);
-    _arena_push_back(arena, ptr, dtor);
+    void *ptr = arena->available_memory;
+    arena->available_memory += size;
     return ptr;
+}
+
+unsigned qcc_arena_add_object(struct qcc_arena *arena, void *ptr,
+                              qcc_destroy_fn dtor)
+{
+    if (qcc_arena_memory_available(arena) < sizeof(struct qcc_arena_object))
+        return 0;
+
+    --arena->objects;
+    arena->objects->ptr = ptr;
+    arena->objects->dtor = dtor;
+    return 1;
 }
 
 const char *qcc_arena_vsprintf(struct qcc_arena *arena, const char *fmt,
                                va_list args)
 {
-    if (arena->size == arena->max_size) return 0;
+    char *str = (char *)arena->available_memory;
 
-    unsigned len = 2 * strlen(fmt);
-    char *str = malloc(len);
+    va_list tmp;
+    va_copy(tmp, args);
+    unsigned len = vsnprintf(str, qcc_arena_memory_available(arena), fmt, tmp);
+    va_end(tmp);
 
-    while (1)
-    {
-        va_list tmp;
-        va_copy(tmp, args);
-        unsigned real_len = vsnprintf(str, len, fmt, tmp);
-        va_end(tmp);
-
-        if (len > real_len) break;
-
-        len = real_len + 1;
-        str = realloc(str, len);
-    }
-
-    _arena_push_back(arena, str, 0);
+    arena->available_memory += len + 1;
     return str;
 }
 
@@ -73,12 +71,10 @@ const char *qcc_arena_sprintf(struct qcc_arena *arena, const char *fmt, ...)
 
 void qcc_arena_reset(struct qcc_arena *arena)
 {
-    for (size_t i = 0; i != arena->size; ++i)
+    while ((uint8_t *)arena->objects < arena->buffer_end)
     {
-        void *ptr = arena->objects[i].ptr;
-        qcc_destroy_fn dtor = arena->objects[i].dtor;
-        if (dtor) dtor(ptr);
-        free(ptr);
+        arena->objects->dtor(arena->objects->ptr);
+        ++arena->objects;
     }
-    arena->size = 0;
+    arena->available_memory = arena->buffer_start;
 }
