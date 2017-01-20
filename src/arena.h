@@ -35,6 +35,15 @@ const char *qcc_arena_vsprintf(struct qcc_arena *arena, const char *fmt,
 const char *qcc_arena_sprintf(struct qcc_arena *arena, const char *fmt, ...);
 void qcc_arena_reset(struct qcc_arena *arena);
 
+#define QCC_ARENA_POD(arena, type, name)                                       \
+    struct type *name =                                                        \
+        (struct type *)qcc_arena_alloc(arena, sizeof(struct type));
+
+#define QCC_ARENA_OBJ(arena, type, name, ...)                                  \
+    QCC_ARENA_POD(arena, type, name)                                           \
+    qcc_arena_add_object(arena, name, (qcc_destroy_fn)type##_done);            \
+    type##_init(name, ##__VA_ARGS__);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

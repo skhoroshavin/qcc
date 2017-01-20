@@ -48,8 +48,7 @@ unsigned qcc_test_context_rand(struct qcc_test_context *ctx)
 void qcc_test_context_register_param(struct qcc_test_context *ctx,
                                      const char *fmt, ...)
 {
-    struct qcc_test_param *param = (struct qcc_test_param *)qcc_arena_alloc(
-        &ctx->arena, sizeof(struct qcc_test_param));
+    QCC_ARENA_POD(&ctx->arena, qcc_test_param, param);
     param->next = 0;
 
     va_list args;

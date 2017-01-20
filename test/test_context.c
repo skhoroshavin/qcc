@@ -1,20 +1,9 @@
 
 #include "qcc.h"
 
-typedef struct qcc_test_context *qcc_test_context_ptr;
-
-qcc_test_context_ptr qcc_gen_qcc_test_context_ptr(struct qcc_test_context *ctx)
-{
-    qcc_test_context_ptr res = qcc_arena_alloc(&ctx->arena, sizeof(*res));
-    qcc_arena_add_object(&ctx->arena, res,
-                         (qcc_destroy_fn)qcc_test_context_done);
-    qcc_test_context_init(res);
-    return res;
-}
-
 TEST(empty_context)
 {
-    GIVEN(qcc_test_context_ptr, ctx);
+    QCC_ARENA_OBJ(&_ctx->arena, qcc_test_context, ctx);
 
     ASSERT(ctx->result == QCC_TEST_SUCCEED);
     ASSERT(ctx->error == 0);
@@ -22,7 +11,7 @@ TEST(empty_context)
 
 TEST(context_fail)
 {
-    GIVEN(qcc_test_context_ptr, ctx);
+    QCC_ARENA_OBJ(&_ctx->arena, qcc_test_context, ctx);
 
     qcc_test_context_fail(ctx, "Code: %d, message: %s", 42, "FAIL");
     ASSERT_UINT(ctx->result, ==, QCC_TEST_FAIL);
@@ -32,7 +21,7 @@ TEST(context_fail)
 
 TEST(context_params)
 {
-    GIVEN(qcc_test_context_ptr, ctx);
+    QCC_ARENA_OBJ(&_ctx->arena, qcc_test_context, ctx);
     qcc_test_context_register_param(ctx, "code: %d", 42);
     qcc_test_context_register_param(ctx, "message: %s", "Hello");
 

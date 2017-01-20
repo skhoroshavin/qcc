@@ -1,22 +1,12 @@
 
 #include "qcc.h"
 
-typedef struct qcc_arena *qcc_arena_ptr;
-
-qcc_arena_ptr qcc_gen_qcc_arena_ptr(struct qcc_test_context *ctx, size_t size)
-{
-    qcc_arena_ptr res = qcc_arena_alloc(&ctx->arena, sizeof(*res));
-    qcc_arena_add_object(&ctx->arena, res, (qcc_destroy_fn)qcc_arena_done);
-    qcc_arena_init(res, size);
-    return res;
-}
-
 static const size_t qcc_arena_object_size = sizeof(struct qcc_arena_object);
 
 TEST(empty_arena)
 {
     GIVEN_UINT(arena_size, not_greater_than, qcc_arena_object_size * 4);
-    GIVEN(qcc_arena_ptr, arena, arena_size);
+    QCC_ARENA_OBJ(&_ctx->arena, qcc_arena, arena, arena_size);
 
     ASSERT(qcc_arena_memory_available(arena) == arena_size);
 }
@@ -24,7 +14,7 @@ TEST(empty_arena)
 TEST(arena_alloc)
 {
     GIVEN_UINT(arena_size, not_greater_than, qcc_arena_object_size * 4);
-    GIVEN(qcc_arena_ptr, arena, arena_size);
+    QCC_ARENA_OBJ(&_ctx->arena, qcc_arena, arena, arena_size);
     GIVEN_UINT(alloc_size, not_greater_than, arena_size * 2);
 
     void *ptr = qcc_arena_alloc(arena, alloc_size);
@@ -46,7 +36,7 @@ static void test_dtor(void *ptr) { test_ptr = ptr; }
 TEST(arena_add_object_reset)
 {
     GIVEN_UINT(arena_size, not_greater_than, qcc_arena_object_size * 4);
-    GIVEN(qcc_arena_ptr, arena, arena_size);
+    QCC_ARENA_OBJ(&_ctx->arena, qcc_arena, arena, arena_size);
 
     test_ptr = 0;
     void *ptr = (void *)(size_t)qcc_gen_uint_any(_ctx);
@@ -78,7 +68,7 @@ TEST(arena_add_object_reset)
 TEST(arena_sprintf)
 {
     GIVEN_UINT(arena_size, not_greater_than, qcc_arena_object_size * 4);
-    GIVEN(qcc_arena_ptr, arena, arena_size);
+    QCC_ARENA_OBJ(&_ctx->arena, qcc_arena, arena, arena_size);
 
     const char *expected_str = "string: Hello, number: 42";
     const size_t expected_size = strlen(expected_str) + 1;
