@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "test_gen.h"
+#include "qcc_uint.h"
 #include <memory.h>
 
 #ifdef __cplusplus
@@ -51,10 +51,9 @@ void qcc_test_main(struct qcc_test_stats *_stats);
     {                                                                          \
         if (!(cond))                                                           \
         {                                                                      \
-            _ctx->result = QCC_TEST_FAIL;                                      \
-            _ctx->error = qcc_arena_sprintf(                                   \
-                &_ctx->arena, "Assertion \"%s\" failed in %s (%s, line %d)\n", \
-                #cond, __FUNCTION__, __FILE__, __LINE__);                      \
+            qcc_test_context_fail(                                             \
+                _ctx, "Assertion \"%s\" failed in %s (%s, line %d)\n", #cond,  \
+                __FUNCTION__, __FILE__, __LINE__);                             \
             return;                                                            \
         }                                                                      \
     } while (0)

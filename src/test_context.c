@@ -19,6 +19,15 @@ void qcc_test_context_done(struct qcc_test_context *ctx)
     qcc_arena_done(&ctx->arena);
 }
 
+void qcc_test_context_fail(struct qcc_test_context *ctx, const char *fmt, ...)
+{
+    ctx->result = QCC_TEST_FAIL;
+    va_list args;
+    va_start(args, fmt);
+    ctx->error = qcc_arena_vsprintf(&ctx->arena, fmt, args);
+    va_end(args);
+}
+
 void qcc_test_context_reset(struct qcc_test_context *ctx)
 {
     ctx->result = QCC_TEST_SUCCEED;
