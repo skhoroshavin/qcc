@@ -24,7 +24,12 @@ void qcc_run_test(struct qcc_test_stats *stats, const char *name,
         if (ctx.result == QCC_TEST_FAIL)
         {
             printf("  %s: FAILED\n", name);
+
+            for (struct qcc_test_param *param = ctx.param; param;
+                 param = param->next)
+                printf("    %s\n", param->value);
             printf("    %s\n", ctx.error);
+
             ++stats->total;
             ++stats->failing;
             break;

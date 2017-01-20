@@ -6,7 +6,7 @@ unsigned qcc_gen_unsigned(struct qcc_test_context *ctx, unsigned min,
 {
     unsigned avg = (min + max) / 2;
 
-    switch (qcc_test_context_rand(ctx) % 10)
+    switch (qcc_test_context_rand(ctx) % 16)
     {
     case 0:
         return min;
