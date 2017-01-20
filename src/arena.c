@@ -5,9 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void *qcc_malloc(size_t size) { return malloc(size); }
+void qcc_free(void *ptr) { free(ptr); }
+
 void qcc_arena_init(struct qcc_arena *arena, size_t max_size)
 {
-    arena->buffer_start = malloc(max_size);
+    arena->buffer_start = qcc_malloc(max_size);
     arena->buffer_end = arena->buffer_start + max_size;
     arena->available_memory = arena->buffer_start;
     arena->objects = (struct qcc_arena_object *)arena->buffer_end;
@@ -16,7 +19,7 @@ void qcc_arena_init(struct qcc_arena *arena, size_t max_size)
 void qcc_arena_done(struct qcc_arena *arena)
 {
     qcc_arena_reset(arena);
-    free(arena->buffer_start);
+    qcc_free(arena->buffer_start);
 }
 
 size_t qcc_arena_memory_available(const struct qcc_arena *arena)
