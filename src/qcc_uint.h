@@ -7,17 +7,22 @@
 extern "C" {
 #endif // __cplusplus
 
-unsigned qcc_gen_uint_any(struct qcc_test_context *ctx);
-unsigned qcc_gen_uint_in_range(struct qcc_test_context *ctx, unsigned min,
-                               unsigned max);
-unsigned qcc_gen_uint_less_than(struct qcc_test_context *ctx, unsigned max);
-unsigned qcc_gen_uint_not_less_than(struct qcc_test_context *ctx, unsigned min);
-unsigned qcc_gen_uint_greater_than(struct qcc_test_context *ctx, unsigned min);
-unsigned qcc_gen_uint_not_greater_than(struct qcc_test_context *ctx,
-                                       unsigned max);
+struct qcc_test_gen *qcc_gen_uint_any(struct qcc_test_context *ctx);
+struct qcc_test_gen *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
+                                           unsigned min, unsigned max);
+struct qcc_test_gen *qcc_gen_uint_less_than(struct qcc_test_context *ctx,
+                                            unsigned max);
+struct qcc_test_gen *qcc_gen_uint_not_less_than(struct qcc_test_context *ctx,
+                                                unsigned min);
+struct qcc_test_gen *qcc_gen_uint_greater_than(struct qcc_test_context *ctx,
+                                               unsigned min);
+struct qcc_test_gen *qcc_gen_uint_not_greater_than(struct qcc_test_context *ctx,
+                                                   unsigned max);
 
-#define GIVEN_UINT(name, constraint, ...)                                      \
-	unsigned name = qcc_gen_uint_##constraint(_ctx, ##__VA_ARGS__);            \
+#define GIVEN_UINT(name, cond, ...)                                            \
+    unsigned name;                                                             \
+    qcc_test_gen_example(qcc_gen_uint_##cond(_ctx, ##__VA_ARGS__), _ctx,       \
+                         &name);                                               \
     qcc_test_context_register_param(_ctx, "%s: %u", #name, name);
 
 #define ASSERT_UINT(got, cond, exp)                                            \

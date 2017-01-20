@@ -1,62 +1,98 @@
 
 #include "qcc_uint.h"
 
-unsigned qcc_gen_uint_any(struct qcc_test_context *ctx)
+static unsigned _qcc_uint_in_range(struct qcc_test_context *ctx, unsigned min,
+                                   unsigned max)
 {
-    if (qcc_test_context_rand(ctx) % 2)
-        return qcc_gen_uint_in_range(ctx, 0, UINT32_MAX);
-    else
-        return qcc_gen_uint_in_range(ctx, 0, 100);
-}
-
-unsigned qcc_gen_uint_in_range(struct qcc_test_context *ctx, unsigned min,
-                               unsigned max)
-{
-    unsigned avg = min / 2 + max / 2;
-    if (avg < min) avg = min;
-    if (avg > min) avg = max;
-
-    switch (qcc_test_context_rand(ctx) % 10)
-    {
-    case 0:
-        return min;
-    case 1:
-        return max;
-    case 2:
-        return min < max ? min + 1 : min;
-    case 3:
-        return min < max ? max - 1 : max;
-    case 4:
-        return avg;
-    case 5:
-        return avg > min ? avg - 1 : avg;
-    case 6:
-        return avg < max ? avg + 1 : avg;
-    }
-
     unsigned result = qcc_test_context_rand(ctx);
     unsigned range = max - min + 1;
     if (range) result = result % range + min;
     return result;
 }
 
-unsigned qcc_gen_uint_less_than(struct qcc_test_context *ctx, unsigned max)
+struct qcc_test_gen_uint_in_range
+{
+    struct qcc_test_gen base;
+    unsigned min;
+    unsigned max;
+};
+
+static void qcc_gen_uint_in_range_example(struct qcc_test_gen *self,
+                                          struct qcc_test_context *ctx,
+                                          void *data)
+{
+    unsigned min = ((struct qcc_test_gen_uint_in_range *)self)->min;
+    unsigned max = ((struct qcc_test_gen_uint_in_range *)self)->max;
+    unsigned *res = (unsigned *)data;
+
+    unsigned avg = min / 2 + max / 2;
+    if (avg < min) avg = min;
+    if (avg > max) avg = max;
+
+    switch (qcc_test_context_rand(ctx) % 10)
+    {
+    case 0:
+        *res = min;
+        return;
+    case 1:
+        *res = max;
+        return;
+    case 2:
+        *res = min < max ? min + 1 : min;
+        return;
+    case 3:
+        *res = min < max ? max - 1 : max;
+        return;
+    case 4:
+        *res = avg;
+        return;
+    case 5:
+        *res = avg > min ? avg - 1 : avg;
+        return;
+    case 6:
+        *res = avg < max ? avg + 1 : avg;
+        return;
+    }
+
+    *res = _qcc_uint_in_range(ctx, min, max);
+}
+
+struct qcc_test_gen *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
+                                           unsigned min, unsigned max)
+{
+    QCC_ARENA_POD(&ctx->arena, qcc_test_gen_uint_in_range, res);
+    res->base.size = sizeof(unsigned);
+    res->base.example = (qcc_test_gen_example_fn)qcc_gen_uint_in_range_example;
+    res->min = min;
+    res->max = max;
+    return &res->base;
+}
+
+struct qcc_test_gen *qcc_gen_uint_any(struct qcc_test_context *ctx)
+{
+    return qcc_gen_uint_in_range(ctx, 0, UINT32_MAX);
+}
+
+struct qcc_test_gen *qcc_gen_uint_less_than(struct qcc_test_context *ctx,
+                                            unsigned max)
 {
     return qcc_gen_uint_in_range(ctx, 0, max - 1);
 }
 
-unsigned qcc_gen_uint_not_less_than(struct qcc_test_context *ctx, unsigned min)
+struct qcc_test_gen *qcc_gen_uint_not_less_than(struct qcc_test_context *ctx,
+                                                unsigned min)
 {
     return qcc_gen_uint_in_range(ctx, min, UINT32_MAX);
 }
 
-unsigned qcc_gen_uint_greater_than(struct qcc_test_context *ctx, unsigned min)
+struct qcc_test_gen *qcc_gen_uint_greater_than(struct qcc_test_context *ctx,
+                                               unsigned min)
 {
     return qcc_gen_uint_in_range(ctx, min + 1, UINT32_MAX);
 }
 
-unsigned qcc_gen_uint_not_greater_than(struct qcc_test_context *ctx,
-                                       unsigned max)
+struct qcc_test_gen *qcc_gen_uint_not_greater_than(struct qcc_test_context *ctx,
+                                                   unsigned max)
 {
     return qcc_gen_uint_in_range(ctx, 0, max - 1);
 }

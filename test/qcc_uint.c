@@ -5,8 +5,8 @@ TEST(gen_uint)
 {
     GIVEN_UINT(min, any);
     GIVEN_UINT(max, not_less_than, min);
+    GIVEN_UINT(value, in_range, min, max);
 
-    unsigned value = qcc_gen_uint_in_range(_ctx, min, max);
     ASSERT_UINT(value, >=, min);
     ASSERT_UINT(value, <=, max);
 }
