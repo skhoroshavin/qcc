@@ -26,6 +26,7 @@ struct qcc_test_context
     const char *error;
     int is_randomized;
     struct qcc_test_param *param;
+    struct qcc_test_param *last_param;
     struct qcc_arena arena;
 };
 

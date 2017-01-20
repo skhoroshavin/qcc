@@ -11,6 +11,7 @@ void qcc_test_context_init(struct qcc_test_context *ctx)
     ctx->error = 0;
     ctx->is_randomized = 0;
     ctx->param = 0;
+    ctx->last_param = 0;
     qcc_arena_init(&ctx->arena, 1024);
 }
 
@@ -34,6 +35,7 @@ void qcc_test_context_reset(struct qcc_test_context *ctx)
     ctx->error = 0;
     ctx->is_randomized = 0;
     ctx->param = 0;
+    ctx->last_param = 0;
     qcc_arena_reset(&ctx->arena);
 }
 
@@ -48,12 +50,21 @@ void qcc_test_context_register_param(struct qcc_test_context *ctx,
 {
     struct qcc_test_param *param = (struct qcc_test_param *)qcc_arena_alloc(
         &ctx->arena, sizeof(struct qcc_test_param));
+    param->next = 0;
 
     va_list args;
     va_start(args, fmt);
     param->value = qcc_arena_vsprintf(&ctx->arena, fmt, args);
     va_end(args);
 
-    param->next = ctx->param;
-    ctx->param = param;
+    if (ctx->param)
+    {
+        ctx->last_param->next = param;
+        ctx->last_param = param;
+    }
+    else
+    {
+        ctx->param = param;
+        ctx->last_param = param;
+    }
 }
