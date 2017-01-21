@@ -21,7 +21,8 @@ qcc_gen_uint_not_greater_than(struct qcc_test_context *ctx, unsigned max);
 
 #define GIVEN_UINT(name, cond, ...)                                            \
     unsigned name;                                                             \
-    qcc_gen_example(qcc_gen_uint_##cond(_ctx, ##__VA_ARGS__), _ctx, &name);    \
+    qcc_generate(qcc_gen_uint_##cond(_ctx, ##__VA_ARGS__), _ctx, &name,        \
+                 sizeof(name));                                                \
     qcc_test_context_register_param(_ctx, "%s: %u", #name, name);
 
 #define ASSERT_UINT(got, cond, exp)                                            \

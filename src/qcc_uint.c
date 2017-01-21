@@ -1,6 +1,8 @@
 
 #include "qcc_uint.h"
 
+#include <assert.h>
+
 static unsigned _qcc_uint_in_range(struct qcc_test_context *ctx, unsigned min,
                                    unsigned max)
 {
@@ -17,10 +19,12 @@ struct qcc_test_gen_uint_in_range
     unsigned max;
 };
 
-static void qcc_gen_uint_in_range_example(struct qcc_generator *self,
-                                          struct qcc_test_context *ctx,
-                                          void *data)
+static void qcc_generate_uint_in_range(struct qcc_generator *self,
+                                       struct qcc_test_context *ctx, void *data,
+                                       size_t size)
 {
+    assert(size == sizeof(unsigned));
+
     unsigned min = ((struct qcc_test_gen_uint_in_range *)self)->min;
     unsigned max = ((struct qcc_test_gen_uint_in_range *)self)->max;
     unsigned *res = (unsigned *)data;
@@ -61,8 +65,7 @@ struct qcc_generator *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
                                             unsigned min, unsigned max)
 {
     QCC_ARENA_POD(&ctx->arena, qcc_test_gen_uint_in_range, res);
-    res->base.size = sizeof(unsigned);
-    res->base.example = (qcc_gen_example_fn)qcc_gen_uint_in_range_example;
+    res->base.generate = qcc_generate_uint_in_range;
     res->min = min;
     res->max = max;
     return &res->base;
