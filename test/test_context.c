@@ -1,9 +1,12 @@
 
 #include "qcc.h"
 
+#define GIVEN_TEST_CONTEXT(name)                                               \
+    QCC_ARENA_OBJ(&_ctx->arena, qcc_test_context, name)
+
 TEST(empty_context)
 {
-    QCC_ARENA_OBJ(&_ctx->arena, qcc_test_context, ctx);
+    GIVEN_TEST_CONTEXT(ctx);
 
     ASSERT(ctx->result == QCC_TEST_SUCCEED);
     ASSERT(ctx->error == 0);
@@ -11,7 +14,7 @@ TEST(empty_context)
 
 TEST(context_fail)
 {
-    QCC_ARENA_OBJ(&_ctx->arena, qcc_test_context, ctx);
+    GIVEN_TEST_CONTEXT(ctx);
 
     qcc_test_context_fail(ctx, "Code: %d, message: %s", 42, "FAIL");
     ASSERT_UINT(ctx->result, ==, QCC_TEST_FAIL);
@@ -21,7 +24,7 @@ TEST(context_fail)
 
 TEST(context_params)
 {
-    QCC_ARENA_OBJ(&_ctx->arena, qcc_test_context, ctx);
+    GIVEN_TEST_CONTEXT(ctx);
     qcc_test_context_register_param(ctx, "code: %d", 42);
     qcc_test_context_register_param(ctx, "message: %s", "Hello");
 
