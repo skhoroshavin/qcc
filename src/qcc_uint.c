@@ -12,12 +12,12 @@ static unsigned _qcc_uint_in_range(struct qcc_test_context *ctx, unsigned min,
 
 struct qcc_test_gen_uint_in_range
 {
-    struct qcc_test_gen base;
+    struct qcc_generator base;
     unsigned min;
     unsigned max;
 };
 
-static void qcc_gen_uint_in_range_example(struct qcc_test_gen *self,
+static void qcc_gen_uint_in_range_example(struct qcc_generator *self,
                                           struct qcc_test_context *ctx,
                                           void *data)
 {
@@ -57,42 +57,42 @@ static void qcc_gen_uint_in_range_example(struct qcc_test_gen *self,
     *res = _qcc_uint_in_range(ctx, min, max);
 }
 
-struct qcc_test_gen *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
-                                           unsigned min, unsigned max)
+struct qcc_generator *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
+                                            unsigned min, unsigned max)
 {
     QCC_ARENA_POD(&ctx->arena, qcc_test_gen_uint_in_range, res);
     res->base.size = sizeof(unsigned);
-    res->base.example = (qcc_test_gen_example_fn)qcc_gen_uint_in_range_example;
+    res->base.example = (qcc_gen_example_fn)qcc_gen_uint_in_range_example;
     res->min = min;
     res->max = max;
     return &res->base;
 }
 
-struct qcc_test_gen *qcc_gen_uint_any(struct qcc_test_context *ctx)
+struct qcc_generator *qcc_gen_uint_any(struct qcc_test_context *ctx)
 {
     return qcc_gen_uint_in_range(ctx, 0, UINT32_MAX);
 }
 
-struct qcc_test_gen *qcc_gen_uint_less_than(struct qcc_test_context *ctx,
-                                            unsigned max)
+struct qcc_generator *qcc_gen_uint_less_than(struct qcc_test_context *ctx,
+                                             unsigned max)
 {
     return qcc_gen_uint_in_range(ctx, 0, max - 1);
 }
 
-struct qcc_test_gen *qcc_gen_uint_not_less_than(struct qcc_test_context *ctx,
-                                                unsigned min)
+struct qcc_generator *qcc_gen_uint_not_less_than(struct qcc_test_context *ctx,
+                                                 unsigned min)
 {
     return qcc_gen_uint_in_range(ctx, min, UINT32_MAX);
 }
 
-struct qcc_test_gen *qcc_gen_uint_greater_than(struct qcc_test_context *ctx,
-                                               unsigned min)
+struct qcc_generator *qcc_gen_uint_greater_than(struct qcc_test_context *ctx,
+                                                unsigned min)
 {
     return qcc_gen_uint_in_range(ctx, min + 1, UINT32_MAX);
 }
 
-struct qcc_test_gen *qcc_gen_uint_not_greater_than(struct qcc_test_context *ctx,
-                                                   unsigned max)
+struct qcc_generator *
+qcc_gen_uint_not_greater_than(struct qcc_test_context *ctx, unsigned max)
 {
     return qcc_gen_uint_in_range(ctx, 0, max - 1);
 }
