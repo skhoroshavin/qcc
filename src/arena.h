@@ -32,6 +32,7 @@ void qcc_arena_reset(struct qcc_arena *arena);
 size_t qcc_arena_memory_available(const struct qcc_arena *arena);
 
 void *qcc_arena_alloc(struct qcc_arena *arena, size_t size);
+void *qcc_arena_copy(struct qcc_arena *arena, const void *data, size_t size);
 unsigned qcc_arena_add_object(struct qcc_arena *arena, void *ptr,
                               qcc_destroy_fn dtor);
 

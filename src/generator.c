@@ -1,10 +1,40 @@
 
 #include "generator.h"
 
+#include <assert.h>
+
 void qcc_generate(struct qcc_generator *self, struct qcc_test_context *ctx,
                   void *data, size_t size)
 {
     self->generate(self, ctx, data, size);
+}
+
+struct qcc_generator_value
+{
+    struct qcc_generator base;
+    const void *data;
+    size_t size;
+};
+
+static void qcc_generate_value(struct qcc_generator *self,
+                               struct qcc_test_context *ctx, void *data,
+                               size_t size)
+{
+    (void)ctx;
+    struct qcc_generator_value *value = (struct qcc_generator_value *)self;
+
+    assert(size == value->size);
+    memcpy(data, value->data, size);
+}
+
+struct qcc_generator *qcc_gen_value(struct qcc_test_context *ctx,
+                                    const void *data, size_t size)
+{
+    QCC_ARENA_POD(&ctx->arena, qcc_generator_value, res);
+    res->base.generate = qcc_generate_value;
+    res->data = qcc_arena_copy(&ctx->arena, data, size);
+    res->size = size;
+    return &res->base;
 }
 
 struct qcc_generator_one_of

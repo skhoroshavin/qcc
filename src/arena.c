@@ -48,6 +48,14 @@ void *qcc_arena_alloc(struct qcc_arena *arena, size_t size)
     return ptr;
 }
 
+void *qcc_arena_copy(struct qcc_arena *arena, const void *data, size_t size)
+{
+    void *clone = qcc_arena_alloc(arena, size);
+    if (!clone) return 0;
+    memcpy(clone, data, size);
+    return clone;
+}
+
 unsigned qcc_arena_add_object(struct qcc_arena *arena, void *ptr,
                               qcc_destroy_fn dtor)
 {
