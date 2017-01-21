@@ -6,7 +6,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif 
 
 struct qcc_test_stats
 {
@@ -72,4 +72,4 @@ void qcc_test_main(struct qcc_test_stats *_stats);
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif 

@@ -5,7 +5,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif
 
 enum qcc_test_result
 {
@@ -40,4 +40,4 @@ void qcc_test_context_register_param(struct qcc_test_context *ctx,
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif

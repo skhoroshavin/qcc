@@ -5,7 +5,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif
 
 struct qcc_generator *qcc_gen_uint_any(struct qcc_test_context *ctx);
 struct qcc_generator *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
@@ -40,4 +40,4 @@ qcc_gen_uint_not_greater_than(struct qcc_test_context *ctx, unsigned max);
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif

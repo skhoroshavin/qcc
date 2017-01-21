@@ -5,7 +5,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif
 
 struct qcc_generator;
 typedef void (*qcc_gen_example_fn)(struct qcc_generator *self,
@@ -22,4 +22,4 @@ void qcc_gen_example(struct qcc_generator *self, struct qcc_test_context *ctx,
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif

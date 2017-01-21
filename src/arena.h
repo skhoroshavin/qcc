@@ -7,7 +7,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif 
 
 typedef void (*qcc_destroy_fn)(void *);
 struct qcc_arena_object
@@ -46,4 +46,4 @@ void qcc_arena_reset(struct qcc_arena *arena);
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif 
