@@ -6,7 +6,8 @@
 struct qcc_generator *qcc_gen_uint_value(struct qcc_test_context *ctx,
                                          unsigned value)
 {
-    return qcc_gen_value(ctx, &value, sizeof(value));
+    return qcc_gen_value_from(
+        ctx, qcc_arena_copy(&ctx->arena, &value, sizeof(value)), sizeof(value));
 }
 
 static unsigned _qcc_uint_in_range(struct qcc_test_context *ctx, unsigned min,

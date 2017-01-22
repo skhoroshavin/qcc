@@ -50,10 +50,10 @@ void *qcc_arena_alloc(struct qcc_arena *arena, size_t size)
 
 void *qcc_arena_copy(struct qcc_arena *arena, const void *data, size_t size)
 {
-    void *clone = qcc_arena_alloc(arena, size);
-    if (!clone) return 0;
-    memcpy(clone, data, size);
-    return clone;
+    void *copy = qcc_arena_alloc(arena, size);
+    if (!copy) return 0;
+    memcpy(copy, data, size);
+    return copy;
 }
 
 unsigned qcc_arena_add_object(struct qcc_arena *arena, void *ptr,
@@ -103,10 +103,12 @@ void qcc_arena_begin_array(struct qcc_arena *arena)
     arena->array_end = arena->array_start;
 }
 
-void qcc_arena_append_array(struct qcc_arena *arena, void *data, size_t size)
+void *qcc_arena_append_array(struct qcc_arena *arena, void *data, size_t size)
 {
-    memcpy(arena->array_end, data, size);
+    void *elem = arena->array_end;
+    if (data) memcpy(elem, data, size);
     arena->array_end += size;
+    return elem;
 }
 
 void *qcc_arena_end_array(struct qcc_arena *arena)

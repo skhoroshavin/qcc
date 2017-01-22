@@ -13,30 +13,33 @@ void qcc_generate(struct qcc_generator *self, struct qcc_test_context *ctx,
  * Generator value_from
  */
 
-struct qcc_generator_value
+struct qcc_generator_value_from
 {
     struct qcc_generator base;
     const void *data;
     size_t size;
 };
 
-static void qcc_generate_value(struct qcc_generator *self,
-                               struct qcc_test_context *ctx, void *data,
-                               size_t size)
+static void qcc_generate_value_from(struct qcc_generator *self,
+                                    struct qcc_test_context *ctx, void *data,
+                                    size_t size)
 {
-    (void)ctx;
-    struct qcc_generator_value *value = (struct qcc_generator_value *)self;
+    struct qcc_generator_value_from *value_of =
+        (struct qcc_generator_value_from *)self;
 
-    assert(size == value->size);
-    memcpy(data, value->data, size);
+    size_t count = value_of->size / size;
+    assert(count * size == value_of->size);
+
+    size_t index = qcc_test_context_rand(ctx) % count;
+    memcpy(data, (char *)value_of->data + index * size, size);
 }
 
-struct qcc_generator *qcc_gen_value(struct qcc_test_context *ctx,
-                                    const void *data, size_t size)
+struct qcc_generator *qcc_gen_value_from(struct qcc_test_context *ctx,
+                                         const void *data, size_t size)
 {
-    QCC_ARENA_POD(&ctx->arena, qcc_generator_value, res);
-    res->base.generate = qcc_generate_value;
-    res->data = qcc_arena_copy(&ctx->arena, data, size);
+    QCC_ARENA_POD(&ctx->arena, qcc_generator_value_from, res);
+    res->base.generate = qcc_generate_value_from;
+    res->data = data;
     res->size = size;
     return &res->base;
 }
@@ -99,8 +102,16 @@ struct qcc_array_params qcc_array_any()
 struct qcc_array_params qcc_array_non_empty()
 {
     struct qcc_array_params params;
-    params.min_size = 0;
+    params.min_size = 1;
     params.max_size = 64;
+    return params;
+}
+
+struct qcc_array_params qcc_array_fixed_size(size_t size)
+{
+    struct qcc_array_params params;
+    params.min_size = size;
+    params.max_size = size;
     return params;
 }
 
