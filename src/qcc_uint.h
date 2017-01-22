@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "generator.h"
+#include "qcc_array.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,6 +28,18 @@ struct qcc_generator *qcc_gen_uint_any(struct qcc_test_context *ctx);
     qcc_generate(qcc_gen_uint_##cond(_ctx, ##__VA_ARGS__), _ctx, &name,        \
                  sizeof(name));                                                \
     qcc_test_context_register_param(_ctx, "%s: %u", #name, name);
+
+#define GIVEN_UINT_ARRAY(name, asize, cond, ...)                               \
+    struct                                                                     \
+    {                                                                          \
+        unsigned *data;                                                        \
+        size_t size;                                                           \
+    } name;                                                                    \
+    qcc_generate(qcc_gen_array_of(_ctx, qcc_array_##asize,                     \
+                                  qcc_gen_uint_##cond(_ctx, ##__VA_ARGS__),    \
+                                  sizeof(unsigned)),                           \
+                 _ctx, &name, sizeof(name));                                   \
+    qcc_test_context_register_param(_ctx, "%s_size: %u", #name, name.size);
 
 #define ASSERT_UINT(got, cond, exp)                                            \
     do                                                                         \
