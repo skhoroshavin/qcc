@@ -48,7 +48,7 @@ int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite);
     {                                                                          \
         if (!(cond))                                                           \
         {                                                                      \
-            ctx->result = QCC_TEST_SKIP;                                       \
+            _ctx->result = QCC_TEST_SKIP;                                      \
             return;                                                            \
         }                                                                      \
     } while (0)

@@ -13,6 +13,14 @@ struct qcc_array_size qcc_array_fixed_size(size_t size)
     return res;
 }
 
+struct qcc_array_size qcc_array_smaller_than(size_t size)
+{
+    struct qcc_array_size res;
+    res.min = 0;
+    res.max = size;
+    return res;
+}
+
 struct qcc_generator_array_of
 {
     struct qcc_generator base;

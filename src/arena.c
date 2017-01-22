@@ -33,6 +33,7 @@ size_t qcc_arena_memory_available(const struct qcc_arena *arena)
 void *qcc_arena_alloc(struct qcc_arena *arena, size_t size)
 {
     if (qcc_arena_memory_available(arena) < size) return 0;
+    if (arena->array_start) return 0;
 
     void *ptr = arena->free_memory;
     arena->free_memory += size;
@@ -96,6 +97,8 @@ void qcc_arena_begin_array(struct qcc_arena *arena)
 
 void *qcc_arena_append_array(struct qcc_arena *arena, void *data, size_t size)
 {
+    if (size > qcc_arena_memory_available(arena)) return 0;
+
     void *elem = arena->array_end;
     if (data) memcpy(elem, data, size);
     arena->array_end += size;
