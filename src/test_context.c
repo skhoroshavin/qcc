@@ -39,10 +39,20 @@ void qcc_test_context_reset(struct qcc_test_context *ctx)
     qcc_arena_reset(&ctx->arena);
 }
 
-unsigned qcc_test_context_rand(struct qcc_test_context *ctx)
+void qcc_test_context_rand(struct qcc_test_context *ctx, void *data,
+                           size_t size)
 {
     ctx->is_randomized = 1;
-    return rand();
+    uint8_t *byte = data;
+    for (size_t i = 0; i != size; ++i)
+        byte[i] = rand();
+}
+
+unsigned qcc_test_context_rand_value(struct qcc_test_context *ctx)
+{
+    unsigned res;
+    qcc_test_context_rand(ctx, &res, sizeof(res));
+    return res;
 }
 
 void qcc_test_context_register_param(struct qcc_test_context *ctx,

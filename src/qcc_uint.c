@@ -13,7 +13,7 @@ struct qcc_generator *qcc_gen_uint_value(struct qcc_test_context *ctx,
 static unsigned _qcc_uint_in_range(struct qcc_test_context *ctx, unsigned min,
                                    unsigned max)
 {
-    unsigned result = qcc_test_context_rand(ctx);
+    unsigned result = qcc_test_context_rand_value(ctx);
     unsigned range = max - min + 1;
     if (range) result = result % range + min;
     return result;
@@ -40,7 +40,7 @@ static void qcc_generate_uint_in_range(struct qcc_generator *self,
     if (avg < min) avg = min;
     if (avg > max) avg = max;
 
-    switch (qcc_test_context_rand(ctx) % 10)
+    switch (qcc_test_context_rand_value(ctx) % 10)
     {
     case 0:
         *res = min;

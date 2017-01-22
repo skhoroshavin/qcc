@@ -47,7 +47,7 @@ static void qcc_generate_array_of(struct qcc_generator *self,
     size_t min_size = array_of->params.min_size;
     size_t max_size = array_of->params.max_size;
     array->size =
-        min_size + qcc_test_context_rand(ctx) % (max_size - min_size + 1);
+        min_size + qcc_test_context_rand_value(ctx) % (max_size - min_size + 1);
 
     array->data =
         qcc_arena_alloc(&ctx->arena, array->size * array_of->elem_size);

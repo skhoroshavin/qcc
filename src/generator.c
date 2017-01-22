@@ -30,7 +30,7 @@ static void qcc_generate_value_from(struct qcc_generator *self,
     size_t count = value_of->size / size;
     assert(count * size == value_of->size);
 
-    size_t index = qcc_test_context_rand(ctx) % count;
+    size_t index = qcc_test_context_rand_value(ctx) % count;
     memcpy(data, (char *)value_of->data + index * size, size);
 }
 
@@ -60,7 +60,7 @@ static void qcc_generate_one_of(struct qcc_generator *self,
                                 size_t size)
 {
     struct qcc_generator_one_of *one_of = (struct qcc_generator_one_of *)self;
-    unsigned index = qcc_test_context_rand(ctx) % one_of->generator_count;
+    unsigned index = qcc_test_context_rand_value(ctx) % one_of->generator_count;
     qcc_generate(one_of->generators + index, ctx, data, size);
 }
 
