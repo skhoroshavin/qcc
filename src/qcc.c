@@ -17,7 +17,7 @@ void qcc_run_test(struct qcc_test_stats *stats, const char *name,
     struct qcc_test_context ctx;
     qcc_test_context_init(&ctx);
 
-    for (unsigned i = 0; i < 100; ++i)
+    for (unsigned i = 0; i < 200; ++i)
     {
         qcc_test_context_reset(&ctx);
         test_fn(&ctx);
@@ -60,14 +60,14 @@ void qcc_run_suite(struct qcc_test_stats *stats, const char *name,
     stats->failing += local_stats.failing;
 }
 
-int qcc_main(int argc, const char *argv[])
+int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite)
 {
     (void)argc;
     (void)argv;
 
     struct qcc_test_stats stats;
     qcc_test_stats_init(&stats);
-    qcc_test_main(&stats);
+    main_suite(&stats);
     printf("Summary: %d total tests run, %d tests failed\n", stats.total,
            stats.failing);
     return stats.failing;

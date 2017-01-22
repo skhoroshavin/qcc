@@ -2,36 +2,36 @@
 #include "qcc_array.h"
 #include <assert.h>
 
-struct qcc_array_params qcc_array_any()
+struct qcc_array_size qcc_array_any()
 {
-    struct qcc_array_params params;
-    params.min_size = 0;
-    params.max_size = 64;
-    return params;
+    struct qcc_array_size res;
+    res.min = 0;
+    res.max = 64;
+    return res;
 }
 
-struct qcc_array_params qcc_array_non_empty()
+struct qcc_array_size qcc_array_non_empty()
 {
-    struct qcc_array_params params;
-    params.min_size = 1;
-    params.max_size = 64;
-    return params;
+    struct qcc_array_size res;
+    res.min = 1;
+    res.max = 64;
+    return res;
 }
 
-struct qcc_array_params qcc_array_fixed_size(size_t size)
+struct qcc_array_size qcc_array_fixed_size(size_t size)
 {
-    struct qcc_array_params params;
-    params.min_size = size;
-    params.max_size = size;
-    return params;
+    struct qcc_array_size res;
+    res.min = size;
+    res.max = size;
+    return res;
 }
 
 struct qcc_generator_array_of
 {
     struct qcc_generator base;
+    struct qcc_array_size size;
     struct qcc_generator *elem_gen;
     size_t elem_size;
-    struct qcc_array_params params;
 };
 
 static void qcc_generate_array_of(struct qcc_generator *self,
@@ -41,13 +41,12 @@ static void qcc_generate_array_of(struct qcc_generator *self,
     struct qcc_generator_array_of *array_of =
         (struct qcc_generator_array_of *)self;
 
-    assert(size == sizeof(struct qcc_array));
+    assert(size == sizeof(struct qcc_array)); // LCOV_EXCL_BR_LINE
     struct qcc_array *array = (struct qcc_array *)data;
 
-    size_t min_size = array_of->params.min_size;
-    size_t max_size = array_of->params.max_size;
-    array->size =
-        min_size + qcc_test_context_rand_value(ctx) % (max_size - min_size + 1);
+    array->size = array_of->size.min +
+                  qcc_test_context_rand_value(ctx) %
+                      (array_of->size.max - array_of->size.min + 1);
 
     array->data =
         qcc_arena_alloc(&ctx->arena, array->size * array_of->elem_size);
@@ -61,14 +60,14 @@ static void qcc_generate_array_of(struct qcc_generator *self,
 }
 
 struct qcc_generator *qcc_gen_array_of(struct qcc_test_context *ctx,
+                                       struct qcc_array_size size,
                                        struct qcc_generator *elem_gen,
-                                       size_t elem_size,
-                                       struct qcc_array_params params)
+                                       size_t elem_size)
 {
     QCC_ARENA_POD(&ctx->arena, qcc_generator_array_of, res);
     res->base.generate = qcc_generate_array_of;
+    res->size = size;
     res->elem_gen = elem_gen;
     res->elem_size = elem_size;
-    res->params = params;
     return &res->base;
 }

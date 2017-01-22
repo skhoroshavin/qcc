@@ -48,12 +48,15 @@ struct qcc_generator *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
 {
     assert(min <= max); // LCOV_EXCL_BR_LINE
 
-    if (max - min < 16) return _gen_uint_in_range(ctx, min, max);
+    if (max - min < 20) return _gen_uint_in_range(ctx, min, max);
 
     unsigned avg = min / 2 + max / 2;
-    return qcc_gen_one_of(ctx, _gen_uint_in_range(ctx, min, min + 8),
-                          _gen_uint_in_range(ctx, max - 8, max),
-                          _gen_uint_in_range(ctx, avg - 4, avg + 4),
+    return qcc_gen_one_of(ctx, _gen_uint_in_range(ctx, min, min + 2),
+                          _gen_uint_in_range(ctx, max - 2, max),
+                          _gen_uint_in_range(ctx, avg - 1, avg + 1),
+                          _gen_uint_in_range(ctx, min, min + 10),
+                          _gen_uint_in_range(ctx, max - 10, max),
+                          _gen_uint_in_range(ctx, avg - 5, avg + 5),
                           _gen_uint_in_range(ctx, min, max), 0);
 }
 
