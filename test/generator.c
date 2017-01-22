@@ -14,7 +14,7 @@ TEST(gen_value_from)
     uint8_t *res = (uint8_t *)qcc_arena_alloc(&_ctx->arena, test_size);
     qcc_test_context_rand(_ctx, res, test_size);
     qcc_generate(gen, _ctx, res, test_size);
-    ASSERT(memcmp(res, test_data, test_size) == 0);
+    ASSERT_MEM_EQ(res, test_data, test_size);
 }
 
 TEST_SUITE(generator) { RUN_TEST(gen_value_from); }

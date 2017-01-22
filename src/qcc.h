@@ -6,7 +6,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 struct qcc_test_stats
 {
@@ -70,6 +70,19 @@ void qcc_test_main(struct qcc_test_stats *_stats);
         }                                                                      \
     } while (0)
 
+#define ASSERT_MEM_EQ(got, expected, size)                                     \
+    do                                                                         \
+    {                                                                          \
+        if (memcmp(got, expected, size) != 0)                                  \
+        {                                                                      \
+            _ctx->result = QCC_TEST_FAIL;                                      \
+            _ctx->error = qcc_arena_sprintf(                                   \
+                &_ctx->arena,                                                  \
+                "Assertion \"%s == %s\" failed in %s (%s, line %d)\n", #got,   \
+                #expected, __FUNCTION__, __FILE__, __LINE__);                  \
+        }                                                                      \
+    } while (0)
+
 #ifdef __cplusplus
 }
-#endif 
+#endif
