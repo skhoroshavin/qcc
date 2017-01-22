@@ -7,20 +7,21 @@
 extern "C" {
 #endif
 
-struct qcc_generator *qcc_gen_uint_value(struct qcc_test_context *ctx,
-                                         unsigned value);
-
-struct qcc_generator *qcc_gen_uint_any(struct qcc_test_context *ctx);
+struct qcc_generator *qcc_gen_uint_equal_to(struct qcc_test_context *ctx,
+                                            unsigned value);
 struct qcc_generator *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
                                             unsigned min, unsigned max);
 struct qcc_generator *qcc_gen_uint_less_than(struct qcc_test_context *ctx,
-                                             unsigned max);
-struct qcc_generator *qcc_gen_uint_not_less_than(struct qcc_test_context *ctx,
-                                                 unsigned min);
+                                             unsigned value);
 struct qcc_generator *qcc_gen_uint_greater_than(struct qcc_test_context *ctx,
-                                                unsigned min);
+                                                unsigned value);
+struct qcc_generator *qcc_gen_uint_not_less_than(struct qcc_test_context *ctx,
+                                                 unsigned value);
 struct qcc_generator *
-qcc_gen_uint_not_greater_than(struct qcc_test_context *ctx, unsigned max);
+qcc_gen_uint_not_greater_than(struct qcc_test_context *ctx, unsigned value);
+struct qcc_generator *qcc_gen_uint_not_equal_to(struct qcc_test_context *ctx,
+                                                unsigned value);
+struct qcc_generator *qcc_gen_uint_any(struct qcc_test_context *ctx);
 
 #define GIVEN_UINT(name, cond, ...)                                            \
     unsigned name;                                                             \

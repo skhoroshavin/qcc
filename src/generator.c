@@ -28,7 +28,7 @@ static void qcc_generate_value_from(struct qcc_generator *self,
         (struct qcc_generator_value_from *)self;
 
     size_t count = value_of->size / size;
-    assert(count * size == value_of->size);
+    assert(count * size == value_of->size); // LCOV_EXCL_BR_LINE
 
     size_t index = qcc_test_context_rand_value(ctx) % count;
     memcpy(data, (char *)value_of->data + index * size, size);
@@ -52,7 +52,7 @@ struct qcc_generator_one_of
 {
     struct qcc_generator base;
     unsigned generator_count;
-    struct qcc_generator *generators;
+    struct qcc_generator **generators;
 };
 
 static void qcc_generate_one_of(struct qcc_generator *self,
@@ -61,7 +61,7 @@ static void qcc_generate_one_of(struct qcc_generator *self,
 {
     struct qcc_generator_one_of *one_of = (struct qcc_generator_one_of *)self;
     unsigned index = qcc_test_context_rand_value(ctx) % one_of->generator_count;
-    qcc_generate(one_of->generators + index, ctx, data, size);
+    qcc_generate(one_of->generators[index], ctx, data, size);
 }
 
 struct qcc_generator *qcc_gen_one_of(struct qcc_test_context *ctx, ...)
