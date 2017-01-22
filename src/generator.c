@@ -24,14 +24,14 @@ static void qcc_generate_value_from(struct qcc_generator *self,
                                     struct qcc_test_context *ctx, void *data,
                                     size_t size)
 {
-    struct qcc_generator_value_from *value_of =
+    struct qcc_generator_value_from *value_from =
         (struct qcc_generator_value_from *)self;
 
-    size_t count = value_of->size / size;
-    assert(count * size == value_of->size); // LCOV_EXCL_BR_LINE
+    size_t count = value_from->size / size;
+    assert(count * size == value_from->size); // LCOV_EXCL_BR_LINE
 
     size_t index = qcc_test_context_rand_value(ctx) % count;
-    memcpy(data, (char *)value_of->data + index * size, size);
+    memcpy(data, (char *)value_from->data + index * size, size);
 }
 
 struct qcc_generator *qcc_gen_value_from(struct qcc_test_context *ctx,
