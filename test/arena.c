@@ -4,9 +4,11 @@
 static const size_t qcc_arena_object_size = sizeof(struct qcc_arena_object);
 
 #define GIVEN_ARENA(name)                                                      \
+    char name##_data[16 * qcc_arena_object_size];                              \
     GIVEN_UINT(name##_size, in_range, 2 * qcc_arena_object_size,               \
-               qcc_arena_object_size * 16);                                    \
-    QCC_ARENA_OBJ(&_ctx->arena, qcc_arena, name, name##_size)
+               sizeof(name##_data));                                           \
+    QCC_ARENA_POD(_ctx->arena, qcc_arena, name);                               \
+    qcc_arena_init(name, name##_data, name##_size)
 
 TEST(empty_arena)
 {

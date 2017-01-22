@@ -2,7 +2,10 @@
 #include "qcc.h"
 
 #define GIVEN_TEST_CONTEXT(name)                                               \
-    QCC_ARENA_OBJ(&_ctx->arena, qcc_test_context, name)
+    char name##_data[8192];                                                    \
+    struct qcc_arena name##_arena;                                             \
+    qcc_arena_init(&name##_arena, name##_data, sizeof(name##_data));           \
+    QCC_ARENA_OBJ(_ctx->arena, qcc_test_context, name, &name##_arena);
 
 TEST(empty_context)
 {

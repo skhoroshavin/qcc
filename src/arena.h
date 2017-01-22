@@ -26,7 +26,7 @@ struct qcc_arena
     uint8_t *array_end;
 };
 
-void qcc_arena_init(struct qcc_arena *arena, size_t max_size);
+void qcc_arena_init(struct qcc_arena *arena, void *buffer, size_t size);
 void qcc_arena_done(struct qcc_arena *arena);
 void qcc_arena_reset(struct qcc_arena *arena);
 size_t qcc_arena_memory_available(const struct qcc_arena *arena);

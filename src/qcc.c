@@ -14,8 +14,12 @@ void qcc_test_stats_init(struct qcc_test_stats *stats)
 void qcc_run_test(struct qcc_test_stats *stats, const char *name,
                   qcc_test_fn test_fn)
 {
+    char arena_data[32768];
+    struct qcc_arena arena;
+    qcc_arena_init(&arena, arena_data, sizeof(arena_data));
+
     struct qcc_test_context ctx;
-    qcc_test_context_init(&ctx);
+    qcc_test_context_init(&ctx, &arena);
 
     for (unsigned i = 0; i < 200; ++i)
     {

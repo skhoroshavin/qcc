@@ -29,7 +29,7 @@ static void _generate_uint_in_range(struct qcc_generator *self,
 static struct qcc_generator *_gen_uint_in_range(struct qcc_test_context *ctx,
                                                 unsigned min, unsigned max)
 {
-    QCC_ARENA_POD(&ctx->arena, _generator_uint_in_range, res);
+    QCC_ARENA_POD(ctx->arena, _generator_uint_in_range, res);
     res->base.generate = _generate_uint_in_range;
     res->min = min;
     res->max = max;
@@ -40,7 +40,7 @@ struct qcc_generator *qcc_gen_uint_equal_to(struct qcc_test_context *ctx,
                                             unsigned value)
 {
     return qcc_gen_value_from(
-        ctx, qcc_arena_copy(&ctx->arena, &value, sizeof(value)), sizeof(value));
+        ctx, qcc_arena_copy(ctx->arena, &value, sizeof(value)), sizeof(value));
 }
 
 struct qcc_generator *qcc_gen_uint_in_range(struct qcc_test_context *ctx,

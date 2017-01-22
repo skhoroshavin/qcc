@@ -37,7 +37,7 @@ static void qcc_generate_value_from(struct qcc_generator *self,
 struct qcc_generator *qcc_gen_value_from(struct qcc_test_context *ctx,
                                          const void *data, size_t size)
 {
-    QCC_ARENA_POD(&ctx->arena, qcc_generator_value_from, res);
+    QCC_ARENA_POD(ctx->arena, qcc_generator_value_from, res);
     res->base.generate = qcc_generate_value_from;
     res->data = data;
     res->size = size;
@@ -66,23 +66,23 @@ static void qcc_generate_one_of(struct qcc_generator *self,
 
 struct qcc_generator *qcc_gen_one_of(struct qcc_test_context *ctx, ...)
 {
-    QCC_ARENA_POD(&ctx->arena, qcc_generator_one_of, res);
+    QCC_ARENA_POD(ctx->arena, qcc_generator_one_of, res);
     res->base.generate = qcc_generate_one_of;
     res->generator_count = 0;
 
     va_list args;
     va_start(args, ctx);
-    qcc_arena_begin_array(&ctx->arena);
+    qcc_arena_begin_array(ctx->arena);
     while (1)
     {
         struct qcc_generator *gen = va_arg(args, struct qcc_generator *);
         if (!gen) break;
 
         ++res->generator_count;
-        qcc_arena_append_array(&ctx->arena, &gen, sizeof(gen));
+        qcc_arena_append_array(ctx->arena, &gen, sizeof(gen));
     }
     va_end(args);
-    res->generators = qcc_arena_end_array(&ctx->arena);
+    res->generators = qcc_arena_end_array(ctx->arena);
 
     return &res->base;
 }
