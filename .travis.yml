@@ -1,0 +1,14 @@
+language: c
+
+install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y -qq lcov curl valgrind cppcheck
+
+script:
+  - mkdir build-release && cd build-release
+  - cmake -DCMAKE_BUILD_TYPE=Release ..
+  - make tests
+  - cd ..
+  - mkdir build-debug && cd build-debug
+  - cmake -DCMAKE_BUILD_TYPE=Debug .. 
+  - make tests
