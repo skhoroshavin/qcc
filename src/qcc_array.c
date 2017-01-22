@@ -25,8 +25,8 @@ struct qcc_generator_array_of
 {
     struct qcc_generator base;
     struct qcc_array_size size;
-    struct qcc_generator *elem_gen;
-    size_t elem_size;
+    struct qcc_generator *item_gen;
+    size_t item_size;
 };
 
 static void qcc_generate_array_of(struct qcc_generator *self,
@@ -44,23 +44,23 @@ static void qcc_generate_array_of(struct qcc_generator *self,
                       (array_of->size.max - array_of->size.min + 1);
 
     array->data =
-        qcc_arena_alloc(ctx->arena, array->size * array_of->elem_size);
+        qcc_arena_alloc(ctx->arena, array->size * array_of->item_size);
     for (size_t i = 0; i < array->size; ++i)
     {
-        void *elem_data = (char *)array->data + i * array_of->elem_size;
-        qcc_generate(array_of->elem_gen, ctx, elem_data, array_of->elem_size);
+        void *item_data = (char *)array->data + i * array_of->item_size;
+        qcc_generate(array_of->item_gen, ctx, item_data, array_of->item_size);
     }
 }
 
 struct qcc_generator *qcc_gen_array_of(struct qcc_test_context *ctx,
                                        struct qcc_array_size size,
-                                       struct qcc_generator *elem_gen,
-                                       size_t elem_size)
+                                       struct qcc_generator *item_gen,
+                                       size_t item_size)
 {
     QCC_ARENA_POD(ctx->arena, qcc_generator_array_of, res);
     res->base.generate = qcc_generate_array_of;
     res->size = size;
-    res->elem_gen = elem_gen;
-    res->elem_size = elem_size;
+    res->item_gen = item_gen;
+    res->item_size = item_size;
     return &res->base;
 }
