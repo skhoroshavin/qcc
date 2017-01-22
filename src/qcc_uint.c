@@ -14,6 +14,7 @@ static void _generate_uint_in_range(struct qcc_generator *self,
                                     struct qcc_test_context *ctx, void *data,
                                     size_t size)
 {
+    (void)size;
     assert(size == sizeof(unsigned)); // LCOV_EXCL_BR_LINE
 
     unsigned min = ((struct _generator_uint_in_range *)self)->min;

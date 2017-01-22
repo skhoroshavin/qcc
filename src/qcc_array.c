@@ -36,6 +36,7 @@ static void qcc_generate_array_of(struct qcc_generator *self,
     struct qcc_generator_array_of *array_of =
         (struct qcc_generator_array_of *)self;
 
+    (void)size;
     assert(size == sizeof(struct qcc_array)); // LCOV_EXCL_BR_LINE
     struct qcc_array *array = (struct qcc_array *)data;
 
