@@ -7,6 +7,9 @@
 extern "C" {
 #endif
 
+struct qcc_generator *qcc_gen_uint_value(struct qcc_test_context *ctx,
+                                         unsigned value);
+
 struct qcc_generator *qcc_gen_uint_any(struct qcc_test_context *ctx);
 struct qcc_generator *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
                                             unsigned min, unsigned max);
