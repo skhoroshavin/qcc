@@ -4,7 +4,8 @@
 static const size_t qcc_arena_object_size = sizeof(struct qcc_arena_object);
 
 #define GIVEN_ARENA(name)                                                      \
-    GIVEN_UINT(name##_size, not_greater_than, qcc_arena_object_size * 4);      \
+    GIVEN_UINT(name##_size, in_range, 2 * qcc_arena_object_size,               \
+               qcc_arena_object_size * 16);                                    \
     QCC_ARENA_OBJ(&_ctx->arena, qcc_arena, name, name##_size)
 
 TEST(empty_arena)
@@ -17,19 +18,45 @@ TEST(empty_arena)
 TEST(arena_alloc)
 {
     GIVEN_ARENA(arena);
-    GIVEN_UINT(alloc_size, not_greater_than, arena_size * 2);
+    GIVEN_UINT(alloc_size, not_greater_than, qcc_arena_memory_available(arena));
 
     void *ptr = qcc_arena_alloc(arena, alloc_size);
-    if (alloc_size > arena_size)
-    {
-        ASSERT(ptr == 0);
-        ASSERT(qcc_arena_memory_available(arena) == arena_size);
-    }
-    else
-    {
-        ASSERT(ptr != 0);
-        ASSERT(qcc_arena_memory_available(arena) == arena_size - alloc_size);
-    }
+    ASSERT(ptr != 0);
+    ASSERT(qcc_arena_memory_available(arena) == arena_size - alloc_size);
+}
+
+TEST(arena_alloc_out_of_mem)
+{
+    GIVEN_ARENA(arena);
+    GIVEN_UINT(alloc_size, greater_than, qcc_arena_memory_available(arena));
+
+    void *ptr = qcc_arena_alloc(arena, alloc_size);
+    ASSERT(ptr == 0);
+    ASSERT(qcc_arena_memory_available(arena) == arena_size);
+}
+
+TEST(arena_copy)
+{
+    GIVEN_ARENA(arena);
+    GIVEN_UINT(size, not_greater_than, qcc_arena_memory_available(arena));
+    GIVEN_DATA(data, size);
+
+    void *ptr = qcc_arena_copy(arena, data, size);
+    ASSERT(ptr != 0);
+    ASSERT(ptr != data);
+    ASSERT_MEM_EQ(ptr, data, size);
+    ASSERT(qcc_arena_memory_available(arena) == arena_size - size);
+}
+
+TEST(arena_copy_out_of_mem)
+{
+    GIVEN_ARENA(arena);
+    GIVEN_UINT(size, greater_than, qcc_arena_memory_available(arena));
+    void *data = (void *)0xDEADBEEF;
+
+    void *ptr = qcc_arena_copy(arena, data, size);
+    ASSERT(ptr == 0);
+    ASSERT(qcc_arena_memory_available(arena) == arena_size);
 }
 
 static void *test_ptr;
@@ -93,6 +120,9 @@ TEST_SUITE(arena)
 {
     RUN_TEST(empty_arena);
     RUN_TEST(arena_alloc);
+    RUN_TEST(arena_alloc_out_of_mem);
+    RUN_TEST(arena_copy);
+    RUN_TEST(arena_copy_out_of_mem);
     RUN_TEST(arena_add_object_reset);
     RUN_TEST(arena_sprintf);
 }

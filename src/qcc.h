@@ -34,6 +34,10 @@ int qcc_main(int argc, const char *argv[]);
 #define TEST_MAIN() void qcc_test_main(struct qcc_test_stats *_stats)
 void qcc_test_main(struct qcc_test_stats *_stats);
 
+#define GIVEN_DATA(name, size)                                                 \
+    void *name = qcc_arena_alloc(&_ctx->arena, size);                          \
+    qcc_test_context_rand(_ctx, name, size);
+
 #define ASSUME(cond)                                                           \
     do                                                                         \
     {                                                                          \
