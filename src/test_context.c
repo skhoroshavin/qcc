@@ -5,8 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void qcc_test_context_init(struct qcc_test_context *ctx,
-                           struct qcc_engine *eng)
+void qcc_test_context_init(struct qcc_test_context *ctx, struct qcc_engine *eng)
 {
     ctx->result = QCC_TEST_SUCCEED;
     ctx->error = 0;
@@ -29,16 +28,6 @@ void qcc_test_context_fail(struct qcc_test_context *ctx, const char *fmt, ...)
     va_start(args, fmt);
     ctx->error = qcc_arena_vsprintf(ctx->arena, fmt, args);
     va_end(args);
-}
-
-void qcc_test_context_reset(struct qcc_test_context *ctx)
-{
-    ctx->result = QCC_TEST_SUCCEED;
-    ctx->error = 0;
-    ctx->is_randomized = 0;
-    ctx->param = 0;
-    ctx->last_param = 0;
-    qcc_arena_reset(ctx->arena);
 }
 
 void qcc_test_context_rand(struct qcc_test_context *ctx, void *data,
