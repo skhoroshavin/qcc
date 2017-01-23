@@ -44,7 +44,6 @@ struct qcc_generator *qcc_gen_uint_any(struct qcc_test_context *ctx);
 #define ASSERT_UINT(got, cond, exp)                                            \
     do                                                                         \
     {                                                                          \
-        ++_ctx->env->total_asserts;                                            \
         if (!((got)cond(exp)))                                                 \
         {                                                                      \
             qcc_test_context_fail(                                             \
