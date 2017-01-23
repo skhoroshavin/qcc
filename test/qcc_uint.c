@@ -42,7 +42,7 @@ TEST(gen_uint_not_greater_than)
 {
     GIVEN_UINT(limit, any);
     GIVEN_UINT(value, not_greater_than, limit);
-    ASSERT_UINT(value, <=, limit);
+    ASSERT_UINT(value, >, limit);
 }
 
 TEST(gen_uint_not_equal_to)
