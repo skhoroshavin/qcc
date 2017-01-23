@@ -1,0 +1,36 @@
+
+#pragma once
+
+#include "arena.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct qcc_test_context;
+
+struct qcc_engine
+{
+    /* Settings */
+    unsigned max_tries;
+    unsigned required_successes;
+
+    /* Statistics */
+    unsigned total_tests;
+    unsigned failed_tests;
+
+    struct qcc_arena arena;
+};
+
+typedef void (*qcc_test_fn)(struct qcc_test_context *);
+
+void qcc_engine_init(struct qcc_engine *eng, void *buffer, size_t buf_size);
+void qcc_engine_done(struct qcc_engine *eng);
+void qcc_engine_success(struct qcc_engine *eng, const char *name);
+void qcc_engine_failure(struct qcc_engine *eng, const char *name);
+void qcc_engine_run_test(struct qcc_engine *eng, const char *name,
+                         qcc_test_fn test_fn);
+
+#ifdef __cplusplus
+}
+#endif

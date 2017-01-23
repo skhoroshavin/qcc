@@ -3,9 +3,9 @@
 
 #define GIVEN_TEST_CONTEXT(name)                                               \
     char name##_data[8192];                                                    \
-    QCC_ARENA_OBJ(_ctx->arena, qcc_test_env, name##_env, name##_data,          \
+    QCC_ARENA_OBJ(_ctx->arena, qcc_engine, name##_eng, name##_data,            \
                   sizeof(name##_data));                                        \
-    QCC_ARENA_OBJ(_ctx->arena, qcc_test_context, name, name##_env);
+    QCC_ARENA_OBJ(_ctx->arena, qcc_test_context, name, name##_eng);
 
 TEST(empty_context)
 {

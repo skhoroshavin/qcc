@@ -6,15 +6,15 @@
 #include <stdlib.h>
 
 void qcc_test_context_init(struct qcc_test_context *ctx,
-                           struct qcc_test_env *env)
+                           struct qcc_engine *eng)
 {
     ctx->result = QCC_TEST_SUCCEED;
     ctx->error = 0;
     ctx->is_randomized = 0;
     ctx->param = 0;
     ctx->last_param = 0;
-    ctx->env = env;
-    ctx->arena = &env->arena;
+    ctx->eng = eng;
+    ctx->arena = &eng->arena;
 }
 
 void qcc_test_context_done(struct qcc_test_context *ctx)
