@@ -15,6 +15,8 @@ void qcc_arena_init(struct qcc_arena *arena, void *buffer, size_t size)
     arena->array_end = 0;
 }
 
+void qcc_arena_done(struct qcc_arena *arena) { qcc_arena_reset(arena); }
+
 void qcc_arena_reset(struct qcc_arena *arena)
 {
     while ((uint8_t *)arena->objects < arena->buffer_end)

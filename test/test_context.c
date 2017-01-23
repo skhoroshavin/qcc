@@ -3,12 +3,9 @@
 
 #define GIVEN_TEST_CONTEXT(name)                                               \
     char name##_data[8192];                                                    \
-    struct qcc_arena name##_arena;                                             \
-    qcc_arena_init(&name##_arena, name##_data, sizeof(name##_data));           \
     struct qcc_test_env name##_env;                                            \
-    qcc_test_env_init(&name##_env);                                            \
-    QCC_ARENA_OBJ(_ctx->arena, qcc_test_context, name, &name##_env,            \
-                  &name##_arena);
+    qcc_test_env_init(&name##_env, name##_data, sizeof(name##_data));          \
+    QCC_ARENA_OBJ(_ctx->arena, qcc_test_context, name, &name##_env);
 
 TEST(empty_context)
 {

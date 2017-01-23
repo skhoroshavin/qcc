@@ -8,12 +8,8 @@
 void qcc_run_test(struct qcc_test_env *env, const char *name,
                   qcc_test_fn test_fn)
 {
-    char arena_data[32768];
-    struct qcc_arena arena;
-    qcc_arena_init(&arena, arena_data, sizeof(arena_data));
-
     struct qcc_test_context ctx;
-    qcc_test_context_init(&ctx, env, &arena);
+    qcc_test_context_init(&ctx, env);
 
     for (unsigned i = 0; i < 1000; ++i)
     {
@@ -49,15 +45,8 @@ void qcc_run_test(struct qcc_test_env *env, const char *name,
 void qcc_run_suite(struct qcc_test_env *env, const char *name,
                    qcc_suite_fn suite_fn)
 {
-    struct qcc_test_env local_env;
-    qcc_test_env_init(&local_env);
     printf("Suite %s:\n", name);
-    suite_fn(&local_env);
-    printf("%d failing out of %d total tests\n", local_env.failed_tests,
-           local_env.total_tests);
-    env->total_tests += local_env.total_tests;
-    env->failed_tests += local_env.failed_tests;
-    env->total_asserts += local_env.total_asserts;
+    suite_fn(env);
 }
 
 int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite)
@@ -65,10 +54,16 @@ int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite)
     (void)argc;
     (void)argv;
 
+    char arena_data[32768];
     struct qcc_test_env env;
-    qcc_test_env_init(&env);
+    qcc_test_env_init(&env, arena_data, sizeof(arena_data));
     main_suite(&env);
-    printf("Summary: %u total tests run, %u tests failed, %u asserts checked\n",
-           env.total_tests, env.failed_tests, env.total_asserts);
-    return env.failed_tests;
+    printf(
+        "Summary: %u total tests run, %u tests failed, %u assertions checked\n",
+        env.total_tests, env.failed_tests, env.total_asserts);
+
+    int res = env.failed_tests;
+    qcc_test_env_done(&env);
+
+    return res;
 }
