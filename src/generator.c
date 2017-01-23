@@ -28,7 +28,7 @@ static void qcc_generate_value_from(struct qcc_generator *self,
         (struct qcc_generator_value_from *)self;
 
     size_t count = value_from->size / size;
-    assert(count * size == value_from->size); // LCOV_EXCL_BR_LINE
+    assert(count * size == value_from->size);
 
     size_t index = qcc_test_context_rand_value(ctx) % count;
     memcpy(data, (char *)value_from->data + index * size, size);

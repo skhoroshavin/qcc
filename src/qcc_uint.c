@@ -15,7 +15,7 @@ static void _generate_uint_in_range(struct qcc_generator *self,
                                     size_t size)
 {
     (void)size;
-    assert(size == sizeof(unsigned)); // LCOV_EXCL_BR_LINE
+    assert(size == sizeof(unsigned));
 
     unsigned min = ((struct _generator_uint_in_range *)self)->min;
     unsigned max = ((struct _generator_uint_in_range *)self)->max;
@@ -47,7 +47,7 @@ struct qcc_generator *qcc_gen_uint_equal_to(struct qcc_test_context *ctx,
 struct qcc_generator *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
                                             unsigned min, unsigned max)
 {
-    assert(min <= max); // LCOV_EXCL_BR_LINE
+    assert(min <= max);
 
     if (max - min < 20) return _gen_uint_in_range(ctx, min, max);
 
