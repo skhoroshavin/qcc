@@ -14,17 +14,27 @@ void qcc_engine_init(struct qcc_engine *eng, void *buffer, size_t buf_size)
 
 void qcc_engine_done(struct qcc_engine *eng) { qcc_arena_done(&eng->arena); }
 
+void qcc_engine_log(struct qcc_engine *eng, const char *fmt, ...)
+{
+    (void)eng;
+
+    va_list args;
+    va_start(args, fmt);
+    vprintf(fmt, args);
+    va_end(args);
+}
+
 void qcc_engine_success(struct qcc_engine *eng, const char *name)
 {
     ++eng->total_tests;
-    printf("  %s: PASSED\n", name);
+    qcc_engine_log(eng, "  %s: PASSED\n", name);
 }
 
 void qcc_engine_failure(struct qcc_engine *eng, const char *name)
 {
     ++eng->failed_tests;
     ++eng->total_tests;
-    printf("  %s: FAILED\n", name);
+    qcc_engine_log(eng, "  %s: FAILED\n", name);
 }
 
 static enum qcc_test_result
@@ -39,8 +49,8 @@ _run_test_once(struct qcc_engine *eng, const char *name, qcc_test_fn test_fn)
         qcc_engine_failure(eng, name);
         for (struct qcc_test_param *param = ctx.param; param;
              param = param->next)
-            printf("    %s\n", param->value);
-        printf("    %s\n", ctx.error);
+            qcc_engine_log(eng, "    %s\n", param->value);
+        qcc_engine_log(eng, "    %s\n", ctx.error);
     }
     qcc_test_context_done(&ctx);
     return result;
@@ -69,12 +79,13 @@ void qcc_engine_run_test(struct qcc_engine *eng, const char *name,
     if (successes == 0)
     {
         qcc_engine_failure(eng, name);
-        printf("    No input was accepted by test as valid\n");
+        qcc_engine_log(eng, "    No input was accepted by test as valid\n");
         return;
     }
 
     qcc_engine_success(eng, name);
     if (successes < eng->required_successes)
-        printf("   Warning: Only %u successful runs out of %u were made\n",
-               successes, eng->required_successes);
+        qcc_engine_log(
+            eng, "   Warning: Only %u successful runs out of %u were made\n",
+            successes, eng->required_successes);
 }
