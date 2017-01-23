@@ -3,10 +3,18 @@
 #include "test_context.h"
 #include <stdio.h>
 
+static void _log_proc(void *data, const char *msg)
+{
+    (void)data;
+    printf("%s", msg);
+}
+
 void qcc_engine_init(struct qcc_engine *eng, void *buffer, size_t buf_size)
 {
     eng->max_tries = 1000;
     eng->required_successes = 100;
+    eng->log_data = 0;
+    eng->log_proc = _log_proc;
     eng->total_tests = 0;
     eng->failed_tests = 0;
     qcc_arena_init(&eng->arena, buffer, buf_size);
@@ -16,12 +24,15 @@ void qcc_engine_done(struct qcc_engine *eng) { qcc_arena_done(&eng->arena); }
 
 void qcc_engine_log(struct qcc_engine *eng, const char *fmt, ...)
 {
-    (void)eng;
+    if (!eng->log_proc) return;
 
+    char buf[1024];
     va_list args;
     va_start(args, fmt);
-    vprintf(fmt, args);
+    vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
+
+    eng->log_proc(eng->log_data, buf);
 }
 
 void qcc_engine_success(struct qcc_engine *eng, const char *name)

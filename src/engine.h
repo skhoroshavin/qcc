@@ -15,6 +15,10 @@ struct qcc_engine
     unsigned max_tries;
     unsigned required_successes;
 
+    /* Logger */
+    void *log_data;
+    void (*log_proc)(void *data, const char *msg);
+
     /* Statistics */
     unsigned total_tests;
     unsigned failed_tests;
