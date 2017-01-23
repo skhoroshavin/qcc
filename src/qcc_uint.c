@@ -58,7 +58,7 @@ struct qcc_generator *qcc_gen_uint_in_range(struct qcc_test_context *ctx,
                           _gen_uint_in_range(ctx, min, min + 10),
                           _gen_uint_in_range(ctx, max - 10, max),
                           _gen_uint_in_range(ctx, avg - 5, avg + 5),
-                          _gen_uint_in_range(ctx, min, max), 0);
+                          _gen_uint_in_range(ctx, min, max), (void *)0);
 }
 
 struct qcc_generator *qcc_gen_uint_less_than(struct qcc_test_context *ctx,
@@ -91,7 +91,7 @@ struct qcc_generator *qcc_gen_uint_not_equal_to(struct qcc_test_context *ctx,
     if (value == 0) return qcc_gen_uint_greater_than(ctx, 0);
     if (value == UINT32_MAX) return qcc_gen_uint_less_than(ctx, UINT32_MAX);
     return qcc_gen_one_of(ctx, qcc_gen_uint_less_than(ctx, value),
-                          qcc_gen_uint_greater_than(ctx, value), 0);
+                          qcc_gen_uint_greater_than(ctx, value), (void *)0);
 }
 
 struct qcc_generator *qcc_gen_uint_any(struct qcc_test_context *ctx)
