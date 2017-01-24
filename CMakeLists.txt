@@ -12,10 +12,10 @@ option(QCC_MEMCHECK "Run tests under memory checker (valgrind, etc)" OFF)
 # General config
 ############################################################
 
-if(NOT WIN32)
+if(NOT MSVC)
     add_definitions(-Wall -Wextra -Werror)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --std=c99")
-endif(NOT WIN32)
+endif(NOT MSVC)
 
 if(QCC_GEN_COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG --coverage")
