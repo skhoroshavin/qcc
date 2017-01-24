@@ -1,0 +1,37 @@
+image: Visual Studio 2015
+
+init:
+  - git config --global core.autocrlf input
+  - cmake --version
+  - msbuild /version
+
+shallow_clone: true
+
+clone_folder: c:\projects\qcc
+
+platform:
+  - Win32 
+  - x64
+
+configuration:
+  - Debug
+  - Release
+
+skip_tags: true
+
+environment:
+  CTEST_OUTPUT_ON_FAILURE: 1
+
+before_build:
+  - cd c:\projects\qcc
+  - mkdir build\MSVC
+  - cd build\MSVC
+  - if "%platform%"=="Win32" cmake -G "Visual Studio 14 2015" -DCMAKE_BUILD_TYPE=%configuration% ..\..
+  - if "%platform%"=="x64" cmake -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=%configuration% ..\..
+
+build:
+  parallel: true
+  project: c:\projects\qcc\build\MSVC\qcc.sln
+
+test_script:
+  - ctest -C "%configuration%"

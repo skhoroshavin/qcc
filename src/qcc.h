@@ -3,6 +3,7 @@
 
 #include "qcc_uint.h"
 #include <memory.h>
+#include <string.h>
 
 QCC_BEGIN_HEADER
 

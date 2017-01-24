@@ -11,8 +11,13 @@
 
 QCC_BEGIN_HEADER
 
+#ifdef WIN32
+#define QCC_PRINTF
+#define QCC_VPRINTF
+#else
 #define QCC_PRINTF __attribute__((format(printf, 2, 3)))
 #define QCC_VPRINTF __attribute__((format_arg(2)))
+#endif /* WIN32 */
 
 QCC_END_HEADER
 
