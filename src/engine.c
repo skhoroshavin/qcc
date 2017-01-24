@@ -1,6 +1,6 @@
 
 #include "engine.h"
-#include "test_context.h"
+#include "context.h"
 #include <stdio.h>
 
 static void _log_proc(void *data, const char *msg)
@@ -45,8 +45,8 @@ void qcc_engine_failure(struct qcc_engine *eng, const char *name)
 static enum qcc_test_result
 _run_test_once(struct qcc_engine *eng, const char *name, qcc_test_fn test_fn)
 {
-    struct qcc_test_context ctx;
-    qcc_test_context_init(&ctx, eng);
+    struct qcc_context ctx;
+    qcc_context_init(&ctx, eng);
     test_fn(&ctx);
     enum qcc_test_result result = ctx.result;
     if (ctx.result == QCC_TEST_FAIL)
@@ -57,7 +57,7 @@ _run_test_once(struct qcc_engine *eng, const char *name, qcc_test_fn test_fn)
             qcc_engine_log(eng, "    %s\n", param->value);
         qcc_engine_log(eng, "    %s\n", ctx.error);
     }
-    qcc_test_context_done(&ctx);
+    qcc_context_done(&ctx);
     return result;
 }
 

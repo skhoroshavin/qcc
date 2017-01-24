@@ -30,7 +30,7 @@ struct qcc_generator_array_of
 };
 
 static void qcc_generate_array_of(struct qcc_generator *self,
-                                  struct qcc_test_context *ctx, void *data,
+                                  struct qcc_context *ctx, void *data,
                                   size_t size)
 {
     struct qcc_generator_array_of *array_of =
@@ -41,7 +41,7 @@ static void qcc_generate_array_of(struct qcc_generator *self,
     struct qcc_array *array = (struct qcc_array *)data;
 
     array->size = array_of->size.min +
-                  qcc_test_context_rand_value(ctx) %
+                  qcc_context_rand_value(ctx) %
                       (array_of->size.max - array_of->size.min + 1);
 
     array->data =
@@ -53,7 +53,7 @@ static void qcc_generate_array_of(struct qcc_generator *self,
     }
 }
 
-struct qcc_generator *qcc_gen_array_of(struct qcc_test_context *ctx,
+struct qcc_generator *qcc_gen_array_of(struct qcc_context *ctx,
                                        struct qcc_array_size size,
                                        struct qcc_generator *item_gen,
                                        size_t item_size)

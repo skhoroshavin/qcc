@@ -5,7 +5,7 @@
 
 QCC_BEGIN_HEADER
 
-struct qcc_test_context;
+struct qcc_context;
 
 struct qcc_engine
 {
@@ -24,7 +24,7 @@ struct qcc_engine
     struct qcc_arena arena;
 };
 
-typedef void (*qcc_test_fn)(struct qcc_test_context *);
+typedef void (*qcc_test_fn)(struct qcc_context *);
 
 void qcc_engine_init(struct qcc_engine *eng, void *buffer, size_t buf_size);
 void qcc_engine_done(struct qcc_engine *eng);

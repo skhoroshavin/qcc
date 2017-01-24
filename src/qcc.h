@@ -10,7 +10,7 @@ typedef void (*qcc_suite_fn)(struct qcc_engine *);
 
 int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite);
 
-#define TEST(name) static void name(struct qcc_test_context *_ctx)
+#define TEST(name) static void name(struct qcc_context *_ctx)
 #define RUN_TEST(name) qcc_engine_run_test(_eng, #name, name)
 
 #define TEST_SUITE(name) void name(struct qcc_engine *_eng)
@@ -26,7 +26,7 @@ int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite);
 
 #define GIVEN_DATA(name, size)                                                 \
     void *name = qcc_arena_alloc(_ctx->arena, size);                           \
-    qcc_test_context_rand(_ctx, name, size);
+    qcc_context_rand(_ctx, name, size);
 
 #define ASSUME(cond)                                                           \
     do                                                                         \
@@ -43,9 +43,9 @@ int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite);
     {                                                                          \
         if (!(cond))                                                           \
         {                                                                      \
-            qcc_test_context_fail(                                             \
-                _ctx, "Assertion \"%s\" failed in %s (%s, line %d)\n", #cond,  \
-                __FUNCTION__, __FILE__, __LINE__);                             \
+            qcc_context_fail(_ctx,                                             \
+                             "Assertion \"%s\" failed in %s (%s, line %d)\n",  \
+                             #cond, __FUNCTION__, __FILE__, __LINE__);         \
             return;                                                            \
         }                                                                      \
     } while (0)
@@ -55,7 +55,7 @@ int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite);
     {                                                                          \
         if (strcmp(got, expected) != 0)                                        \
         {                                                                      \
-            qcc_test_context_fail(                                             \
+            qcc_context_fail(                                                  \
                 _ctx,                                                          \
                 "Assertion \"%s\" == \"%s\" failed in %s (%s, line %d)\n",     \
                 (got), (expected), __FUNCTION__, __FILE__, __LINE__);          \
@@ -68,7 +68,7 @@ int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite);
     {                                                                          \
         if (memcmp(got, expected, size) != 0)                                  \
         {                                                                      \
-            qcc_test_context_fail(                                             \
+            qcc_context_fail(                                                  \
                 _ctx, "Assertion \"%s == %s\" failed in %s (%s, line %d)\n",   \
                 #got, #expected, __FUNCTION__, __FILE__, __LINE__);            \
             return;                                                            \

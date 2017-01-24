@@ -3,7 +3,7 @@
 
 #include <assert.h>
 
-void qcc_generate(struct qcc_generator *self, struct qcc_test_context *ctx,
+void qcc_generate(struct qcc_generator *self, struct qcc_context *ctx,
                   void *data, size_t size)
 {
     self->generate(self, ctx, data, size);
@@ -21,7 +21,7 @@ struct qcc_generator_value_from
 };
 
 static void qcc_generate_value_from(struct qcc_generator *self,
-                                    struct qcc_test_context *ctx, void *data,
+                                    struct qcc_context *ctx, void *data,
                                     size_t size)
 {
     struct qcc_generator_value_from *value_from =
@@ -30,11 +30,11 @@ static void qcc_generate_value_from(struct qcc_generator *self,
     size_t count = value_from->size / size;
     assert(count * size == value_from->size);
 
-    size_t index = qcc_test_context_rand_value(ctx) % count;
+    size_t index = qcc_context_rand_value(ctx) % count;
     memcpy(data, (char *)value_from->data + index * size, size);
 }
 
-struct qcc_generator *qcc_gen_value_from(struct qcc_test_context *ctx,
+struct qcc_generator *qcc_gen_value_from(struct qcc_context *ctx,
                                          const void *data, size_t size)
 {
     QCC_ARENA_POD(ctx->arena, qcc_generator_value_from, res);
@@ -56,15 +56,15 @@ struct qcc_generator_one_of
 };
 
 static void qcc_generate_one_of(struct qcc_generator *self,
-                                struct qcc_test_context *ctx, void *data,
+                                struct qcc_context *ctx, void *data,
                                 size_t size)
 {
     struct qcc_generator_one_of *one_of = (struct qcc_generator_one_of *)self;
-    unsigned index = qcc_test_context_rand_value(ctx) % one_of->generator_count;
+    unsigned index = qcc_context_rand_value(ctx) % one_of->generator_count;
     qcc_generate(one_of->generators[index], ctx, data, size);
 }
 
-struct qcc_generator *qcc_gen_one_of(struct qcc_test_context *ctx, ...)
+struct qcc_generator *qcc_gen_one_of(struct qcc_context *ctx, ...)
 {
     QCC_ARENA_POD(ctx->arena, qcc_generator_one_of, res);
     res->base.generate = qcc_generate_one_of;

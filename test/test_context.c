@@ -3,7 +3,7 @@
 
 TEST(empty_context)
 {
-    GIVEN_TEST_CONTEXT(ctx);
+    GIVEN_CONTEXT(ctx);
 
     ASSERT(ctx->result == QCC_TEST_SUCCEED);
     ASSERT(ctx->error == 0);
@@ -11,9 +11,9 @@ TEST(empty_context)
 
 TEST(context_fail)
 {
-    GIVEN_TEST_CONTEXT(ctx);
+    GIVEN_CONTEXT(ctx);
 
-    qcc_test_context_fail(ctx, "Code: %d, message: %s", 42, "FAIL");
+    qcc_context_fail(ctx, "Code: %d, message: %s", 42, "FAIL");
     ASSERT_UINT(ctx->result, ==, QCC_TEST_FAIL);
     ASSERT(ctx->error != 0);
     ASSERT_STR_EQ(ctx->error, "Code: 42, message: FAIL");
@@ -21,9 +21,9 @@ TEST(context_fail)
 
 TEST(context_params)
 {
-    GIVEN_TEST_CONTEXT(ctx);
-    qcc_test_context_register_param(ctx, "code: %d", 42);
-    qcc_test_context_register_param(ctx, "message: %s", "Hello");
+    GIVEN_CONTEXT(ctx);
+    qcc_context_register_param(ctx, "code: %d", 42);
+    qcc_context_register_param(ctx, "message: %s", "Hello");
 
     ASSERT_UINT(ctx->result, ==, QCC_TEST_SUCCEED);
     ASSERT(ctx->error == 0);
@@ -40,7 +40,7 @@ TEST(context_params)
     ASSERT(param == 0);
 }
 
-TEST_SUITE(test_context)
+TEST_SUITE(context)
 {
     RUN_TEST(empty_context);
     RUN_TEST(context_fail);

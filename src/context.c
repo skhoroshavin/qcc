@@ -1,11 +1,11 @@
 
-#include "test_context.h"
+#include "context.h"
 #include <memory.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-void qcc_test_context_init(struct qcc_test_context *ctx, struct qcc_engine *eng)
+void qcc_context_init(struct qcc_context *ctx, struct qcc_engine *eng)
 {
     ctx->result = QCC_TEST_SUCCEED;
     ctx->error = 0;
@@ -16,12 +16,9 @@ void qcc_test_context_init(struct qcc_test_context *ctx, struct qcc_engine *eng)
     ctx->arena = &eng->arena;
 }
 
-void qcc_test_context_done(struct qcc_test_context *ctx)
-{
-    qcc_arena_reset(ctx->arena);
-}
+void qcc_context_done(struct qcc_context *ctx) { qcc_arena_reset(ctx->arena); }
 
-void qcc_test_context_fail(struct qcc_test_context *ctx, const char *fmt, ...)
+void qcc_context_fail(struct qcc_context *ctx, const char *fmt, ...)
 {
     ctx->result = QCC_TEST_FAIL;
     va_list args;
@@ -30,8 +27,7 @@ void qcc_test_context_fail(struct qcc_test_context *ctx, const char *fmt, ...)
     va_end(args);
 }
 
-void qcc_test_context_rand(struct qcc_test_context *ctx, void *data,
-                           size_t size)
+void qcc_context_rand(struct qcc_context *ctx, void *data, size_t size)
 {
     ctx->is_randomized = 1;
     uint8_t *byte = data;
@@ -39,15 +35,14 @@ void qcc_test_context_rand(struct qcc_test_context *ctx, void *data,
         byte[i] = rand();
 }
 
-unsigned qcc_test_context_rand_value(struct qcc_test_context *ctx)
+unsigned qcc_context_rand_value(struct qcc_context *ctx)
 {
     unsigned res;
-    qcc_test_context_rand(ctx, &res, sizeof(res));
+    qcc_context_rand(ctx, &res, sizeof(res));
     return res;
 }
 
-void qcc_test_context_register_param(struct qcc_test_context *ctx,
-                                     const char *fmt, ...)
+void qcc_context_register_param(struct qcc_context *ctx, const char *fmt, ...)
 {
     QCC_ARENA_POD(ctx->arena, qcc_test_param, param);
     param->next = 0;
