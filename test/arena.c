@@ -1,26 +1,6 @@
 
-#include "qcc.h"
+#include "test_common.h"
 #include <stdlib.h>
-
-static const size_t qcc_arena_object_size = sizeof(struct qcc_arena_object);
-
-#define GIVEN_ARENA(name)                                                      \
-    char name##_data[16 * qcc_arena_object_size];                              \
-    GIVEN_UINT(name##_size, in_range, 2 * qcc_arena_object_size,               \
-               sizeof(name##_data));                                           \
-    QCC_ARENA_POD(_ctx->arena, qcc_arena, name);                               \
-    qcc_arena_init(name, name##_data, name##_size)
-
-#define GIVEN_PTR(name)                                                        \
-    GIVEN_UINT(name##_ptr, not_equal_to, 0);                                   \
-    void *name = (void *)(size_t)name##_ptr;
-
-TEST(empty_arena)
-{
-    GIVEN_ARENA(arena);
-
-    ASSERT(qcc_arena_memory_available(arena) == arena_size);
-}
 
 TEST(arena_alloc)
 {
@@ -91,7 +71,7 @@ TEST(arena_objects)
     qcc_arena_add_object(arena, obj2, test_dtor);
     ASSERT(test_obj_count == 0);
     ASSERT(qcc_arena_memory_available(arena) ==
-           arena_size - 2 * qcc_arena_object_size);
+           arena_size - 2 * sizeof(struct qcc_arena_object));
 
     qcc_arena_reset(arena);
     ASSERT(test_obj_count == 2);
@@ -195,7 +175,6 @@ TEST(arena_array_out_of_mem)
 
 TEST_SUITE(arena)
 {
-    RUN_TEST(empty_arena);
     RUN_TEST(arena_alloc);
     RUN_TEST(arena_alloc_out_of_mem);
     RUN_TEST(arena_copy);

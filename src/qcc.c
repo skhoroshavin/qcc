@@ -5,13 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void qcc_run_suite(struct qcc_engine *eng, const char *name,
-                   qcc_suite_fn suite_fn)
-{
-    qcc_engine_log(eng, "Suite %s:\n", name);
-    suite_fn(eng);
-}
-
 int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite)
 {
     (void)argc;

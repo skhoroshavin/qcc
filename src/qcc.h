@@ -10,15 +10,13 @@ extern "C" {
 
 typedef void (*qcc_suite_fn)(struct qcc_engine *);
 
-void qcc_run_suite(struct qcc_engine *eng, const char *name,
-                   qcc_suite_fn suite_fn);
 int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite);
 
 #define TEST(name) static void name(struct qcc_test_context *_ctx)
 #define RUN_TEST(name) qcc_engine_run_test(_eng, #name, name)
 
 #define TEST_SUITE(name) void name(struct qcc_engine *_eng)
-#define RUN_SUITE(name) qcc_run_suite(_eng, #name, name)
+#define RUN_SUITE(name) name(_eng)
 
 #define TEST_MAIN()                                                            \
     void qcc_test_main(struct qcc_engine *_eng);                               \

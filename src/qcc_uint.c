@@ -98,3 +98,11 @@ struct qcc_generator *qcc_gen_uint_any(struct qcc_test_context *ctx)
 {
     return qcc_gen_uint_in_range(ctx, 0, UINT32_MAX);
 }
+
+unsigned qcc_generate_uint(struct qcc_generator *self,
+                           struct qcc_test_context *ctx)
+{
+    unsigned result;
+    qcc_generate(self, ctx, &result, sizeof(result));
+    return result;
+}

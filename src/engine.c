@@ -35,17 +35,11 @@ void qcc_engine_log(struct qcc_engine *eng, const char *fmt, ...)
     eng->log_proc(eng->log_data, buf);
 }
 
-void qcc_engine_success(struct qcc_engine *eng, const char *name)
-{
-    ++eng->total_tests;
-    qcc_engine_log(eng, "  %s: PASSED\n", name);
-}
-
 void qcc_engine_failure(struct qcc_engine *eng, const char *name)
 {
     ++eng->failed_tests;
     ++eng->total_tests;
-    qcc_engine_log(eng, "  %s: FAILED\n", name);
+    qcc_engine_log(eng, "%s: FAILED\n", name);
 }
 
 static enum qcc_test_result
@@ -94,7 +88,7 @@ void qcc_engine_run_test(struct qcc_engine *eng, const char *name,
         return;
     }
 
-    qcc_engine_success(eng, name);
+    ++eng->total_tests;
     if (successes < eng->required_successes)
         qcc_engine_log(
             eng, "   Warning: Only %u successful runs out of %u were made\n",

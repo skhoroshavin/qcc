@@ -23,10 +23,14 @@ struct qcc_generator *qcc_gen_uint_not_equal_to(struct qcc_test_context *ctx,
                                                 unsigned value);
 struct qcc_generator *qcc_gen_uint_any(struct qcc_test_context *ctx);
 
+unsigned qcc_generate_uint(struct qcc_generator *self,
+                           struct qcc_test_context *ctx);
+
+#define qcc_rand_uint(ctx, cond, ...)                                          \
+    qcc_generate_uint(qcc_gen_uint_##cond(ctx, ##__VA_ARGS__), ctx)
+
 #define GIVEN_UINT(name, cond, ...)                                            \
-    unsigned name;                                                             \
-    qcc_generate(qcc_gen_uint_##cond(_ctx, ##__VA_ARGS__), _ctx, &name,        \
-                 sizeof(name));                                                \
+    unsigned name = qcc_rand_uint(_ctx, cond, ##__VA_ARGS__);                  \
     qcc_test_context_register_param(_ctx, "%s: %u", #name, name);
 
 #define GIVEN_UINT_ARRAY(name, asize, cond, ...)                               \

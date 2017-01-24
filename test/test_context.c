@@ -1,5 +1,5 @@
 
-#include "qcc.h"
+#include "test_common.h"
 
 #define GIVEN_TEST_CONTEXT(name)                                               \
     char name##_data[8192];                                                    \
