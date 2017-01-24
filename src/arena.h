@@ -1,13 +1,12 @@
 
 #pragma once
 
+#include "common.h"
 #include <memory.h>
 #include <stdarg.h>
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+QCC_BEGIN_HEADER
 
 typedef void (*qcc_destroy_fn)(void *);
 struct qcc_arena_object
@@ -37,8 +36,9 @@ unsigned qcc_arena_add_object(struct qcc_arena *arena, void *ptr,
                               qcc_destroy_fn dtor);
 
 const char *qcc_arena_vsprintf(struct qcc_arena *arena, const char *fmt,
-                               va_list args);
-const char *qcc_arena_sprintf(struct qcc_arena *arena, const char *fmt, ...);
+                               va_list args) QCC_VPRINTF;
+const char *qcc_arena_sprintf(struct qcc_arena *arena, const char *fmt,
+                              ...) QCC_PRINTF;
 
 void qcc_arena_begin_array(struct qcc_arena *arena);
 void *qcc_arena_append_array(struct qcc_arena *arena, void *data, size_t size);
@@ -53,6 +53,4 @@ void *qcc_arena_end_array(struct qcc_arena *arena);
     qcc_arena_add_object(arena, name, (qcc_destroy_fn)type##_done);            \
     type##_init(name, ##__VA_ARGS__);
 
-#ifdef __cplusplus
-}
-#endif
+QCC_END_HEADER

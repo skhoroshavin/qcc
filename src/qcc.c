@@ -10,7 +10,7 @@ int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite)
     (void)argc;
     (void)argv;
 
-    char arena_data[32768];
+    char arena_data[65536];
     struct qcc_engine eng;
     qcc_engine_init(&eng, arena_data, sizeof(arena_data));
     main_suite(&eng);

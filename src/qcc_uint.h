@@ -3,9 +3,7 @@
 
 #include "qcc_array.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+QCC_BEGIN_HEADER
 
 struct qcc_generator *qcc_gen_uint_equal_to(struct qcc_test_context *ctx,
                                             unsigned value);
@@ -43,7 +41,7 @@ unsigned qcc_generate_uint(struct qcc_generator *self,
                                   qcc_gen_uint_##cond(_ctx, ##__VA_ARGS__),    \
                                   sizeof(unsigned)),                           \
                  _ctx, &name, sizeof(name));                                   \
-    qcc_test_context_register_param(_ctx, "%s_size: %u", #name, name.size);
+    qcc_test_context_register_param(_ctx, "%s_size: %zu", #name, name.size);
 
 #define ASSERT_UINT(got, cond, exp)                                            \
     do                                                                         \
@@ -53,12 +51,10 @@ unsigned qcc_generate_uint(struct qcc_generator *self,
             qcc_test_context_fail(                                             \
                 _ctx, "Assertion \"%s %s %s\" (%u %s %u) failed in "           \
                       "%s (%s, line %d)\n",                                    \
-                #got, #cond, #exp, (got), #cond, (exp), __FUNCTION__,          \
-                __FILE__, __LINE__);                                           \
+                #got, #cond, #exp, (unsigned)(got), #cond, (unsigned)(exp),    \
+                __FUNCTION__, __FILE__, __LINE__);                             \
             return;                                                            \
         }                                                                      \
     } while (0)
 
-#ifdef __cplusplus
-}
-#endif
+QCC_END_HEADER

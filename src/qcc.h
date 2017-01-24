@@ -4,9 +4,7 @@
 #include "qcc_uint.h"
 #include <memory.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+QCC_BEGIN_HEADER
 
 typedef void (*qcc_suite_fn)(struct qcc_engine *);
 
@@ -77,6 +75,4 @@ int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite);
         }                                                                      \
     } while (0)
 
-#ifdef __cplusplus
-}
-#endif
+QCC_END_HEADER
