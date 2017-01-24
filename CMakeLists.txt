@@ -26,12 +26,25 @@ endif(QCC_GEN_COVERAGE)
 include_directories(src)
 aux_source_directory(src SRC_LIST)
 
-add_library(qcc SHARED ${SRC_LIST})
+add_library(qcc STATIC ${SRC_LIST})
 link_directories(${PROJECT_BINARY_DIR})
 
 ############################################################
 # Tests
 ############################################################
+
+include(CTest)
+enable_testing()
+
+if(QCC_GEN_COVERAGE)
+    set(QCC_PRE_TEST pre_test_coverage.sh)
+    set(QCC_POST_TEST post_test_coverage.sh)
+else(QCC_GEN_COVERAGE)
+    set(QCC_PRE_TEST pre_test.sh)
+    set(QCC_POST_TEST post_test.sh)
+endif(QCC_GEN_COVERAGE)
+
+configure_file(CTestCustom.cmake ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
 
 include_directories(test)
 aux_source_directory(test TEST_LIST)
@@ -39,19 +52,4 @@ aux_source_directory(test TEST_LIST)
 add_executable(test_qcc ${TEST_LIST})
 add_dependencies(test_qcc qcc)
 target_link_libraries(test_qcc -lqcc)
-
-if(QCC_GEN_COVERAGE)
-    add_custom_target(tests
-        COMMAND cppcheck ${PROJECT_SOURCE_DIR}/src/*
-        COMMAND find CMakeFiles/qcc.dir/ -name *.gcda -type f -delete || true
-        COMMAND rm -rvf coverage*
-        COMMAND valgrind ./test_qcc
-        COMMAND lcov --capture --directory CMakeFiles/qcc.dir/ --output-file coverage.info
-        COMMAND genhtml coverage.info --output-directory coverage
-        DEPENDS test_qcc)
-else(QCC_GEN_COVERAGE)
-    add_custom_target(tests
-        COMMAND cppcheck ${PROJECT_SOURCE_DIR}/src/*
-        COMMAND valgrind ./test_qcc
-        DEPENDS test_qcc)
-endif(QCC_GEN_COVERAGE)
+add_test(test_qcc test_qcc)
