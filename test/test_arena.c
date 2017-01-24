@@ -1,5 +1,5 @@
 
-#include "test_common.h"
+#include "test_qcc.h"
 #include <stdlib.h>
 
 TEST(arena_alloc)
@@ -173,7 +173,7 @@ TEST(arena_array_out_of_mem)
                 arena_size - alloc_size_good);
 }
 
-TEST_SUITE(arena)
+TEST_MAIN()
 {
     RUN_TEST(arena_alloc);
     RUN_TEST(arena_alloc_out_of_mem);

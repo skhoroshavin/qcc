@@ -6,15 +6,12 @@
 
 QCC_BEGIN_HEADER
 
-typedef void (*qcc_suite_fn)(struct qcc_engine *);
+typedef void (*qcc_main_fn)(struct qcc_engine *);
 
-int qcc_main(int argc, const char *argv[], qcc_suite_fn main_suite);
+int qcc_main(int argc, const char *argv[], qcc_main_fn main_fn);
 
 #define TEST(name) static void name(struct qcc_context *_ctx)
 #define RUN_TEST(name) qcc_engine_run_test(_eng, #name, name)
-
-#define TEST_SUITE(name) void name(struct qcc_engine *_eng)
-#define RUN_SUITE(name) name(_eng)
 
 #define TEST_MAIN()                                                            \
     void qcc_test_main(struct qcc_engine *_eng);                               \

@@ -1,5 +1,5 @@
 
-#include "test_common.h"
+#include "test_qcc.h"
 
 TEST(empty_context)
 {
@@ -40,7 +40,7 @@ TEST(context_params)
     ASSERT(param == 0);
 }
 
-TEST_SUITE(context)
+TEST_MAIN()
 {
     RUN_TEST(empty_context);
     RUN_TEST(context_fail);

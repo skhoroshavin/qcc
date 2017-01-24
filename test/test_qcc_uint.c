@@ -78,7 +78,7 @@ TEST(gen_uint_fixed_size_array)
     ASSERT_UINT(test.size, ==, size);
 }
 
-TEST_SUITE(qcc_uint)
+TEST_MAIN()
 {
     RUN_TEST(gen_uint_equal_to);
     RUN_TEST(gen_uint_in_range);
