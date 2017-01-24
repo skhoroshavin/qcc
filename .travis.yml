@@ -10,8 +10,10 @@ script:
   - cmake -DCMAKE_BUILD_TYPE=Release ..
   - make
   - make test
+  - ctest -T memcheck
   - cd ..
   - mkdir build-debug && cd build-debug
   - cmake -DCMAKE_BUILD_TYPE=Debug .. 
   - make
   - make test
+  - ctest -T memcheck
