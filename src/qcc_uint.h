@@ -5,26 +5,42 @@
 
 QCC_BEGIN_HEADER
 
+enum qcc_uint_type
+{
+    QCC_UINT8,
+    QCC_UINT16,
+    QCC_UINT32,
+    QCC_UINT64
+};
+
 struct qcc_generator *qcc_gen_uint_equal_to(struct qcc_context *ctx,
+                                            enum qcc_uint_type type,
                                             unsigned value);
 struct qcc_generator *qcc_gen_uint_in_range(struct qcc_context *ctx,
+                                            enum qcc_uint_type type,
                                             unsigned min, unsigned max);
 struct qcc_generator *qcc_gen_uint_less_than(struct qcc_context *ctx,
+                                             enum qcc_uint_type type,
                                              unsigned value);
 struct qcc_generator *qcc_gen_uint_greater_than(struct qcc_context *ctx,
+                                                enum qcc_uint_type type,
                                                 unsigned value);
 struct qcc_generator *qcc_gen_uint_not_less_than(struct qcc_context *ctx,
+                                                 enum qcc_uint_type type,
                                                  unsigned value);
 struct qcc_generator *qcc_gen_uint_not_greater_than(struct qcc_context *ctx,
+                                                    enum qcc_uint_type type,
                                                     unsigned value);
 struct qcc_generator *qcc_gen_uint_not_equal_to(struct qcc_context *ctx,
+                                                enum qcc_uint_type type,
                                                 unsigned value);
-struct qcc_generator *qcc_gen_uint_any(struct qcc_context *ctx);
+struct qcc_generator *qcc_gen_uint_any(struct qcc_context *ctx,
+                                       enum qcc_uint_type type);
 
 unsigned qcc_generate_uint(struct qcc_generator *self, struct qcc_context *ctx);
 
 #define qcc_rand_uint(ctx, cond, ...)                                          \
-    qcc_generate_uint(qcc_gen_uint_##cond(ctx, ##__VA_ARGS__), ctx)
+    qcc_generate_uint(qcc_gen_uint_##cond(ctx, QCC_UINT32, ##__VA_ARGS__), ctx)
 
 #define GIVEN_UINT(name, cond, ...)                                            \
     unsigned name = qcc_rand_uint(_ctx, cond, ##__VA_ARGS__);                  \
@@ -36,10 +52,10 @@ unsigned qcc_generate_uint(struct qcc_generator *self, struct qcc_context *ctx);
         unsigned *data;                                                        \
         size_t size;                                                           \
     } name;                                                                    \
-    qcc_generate(qcc_gen_array_of(_ctx, qcc_array_##asize,                     \
-                                  qcc_gen_uint_##cond(_ctx, ##__VA_ARGS__),    \
-                                  sizeof(unsigned)),                           \
-                 _ctx, &name, sizeof(name));                                   \
+    qcc_generate(qcc_gen_array_of(                                             \
+                     _ctx, qcc_array_##asize,                                  \
+                     qcc_gen_uint_##cond(_ctx, QCC_UINT32, ##__VA_ARGS__)),    \
+                 _ctx, &name);                                                 \
     qcc_context_register_param(_ctx, "%s_size: %zu", #name, name.size);
 
 #define ASSERT_UINT(got, cond, exp)                                            \
