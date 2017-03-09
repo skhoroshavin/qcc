@@ -4,7 +4,6 @@
 #include "common.h"
 #include <memory.h>
 #include <stdarg.h>
-#include <stdint.h>
 
 QCC_BEGIN_HEADER
 

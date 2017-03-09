@@ -1,6 +1,10 @@
 
 #pragma once
 
+#include <inttypes.h>
+#include <stddef.h>
+#include <stdint.h>
+
 #ifdef __cplusplus
 #define QCC_BEGIN_HEADER extern "C" {
 #define QCC_END_HEADER }
@@ -19,5 +23,17 @@ QCC_BEGIN_HEADER
 #define QCC_VPRINTF __attribute__((format_arg(2)))
 #endif /* WIN32 */
 
-QCC_END_HEADER
+typedef int64_t qcc_int;
+typedef uint64_t qcc_uint;
 
+#define QCC_INT_MIN INT64_MIN
+#define QCC_INT_MAX INT64_MAX
+#define QCC_UINT_MAX UINT64_MAX
+
+#define qcc_is_unsigned_type(type) (((type)-1) > 0)
+
+qcc_int qcc_int_max(size_t size);
+qcc_int qcc_int_min(size_t size);
+qcc_uint qcc_uint_max(size_t size);
+
+QCC_END_HEADER

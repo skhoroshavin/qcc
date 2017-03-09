@@ -66,5 +66,6 @@ else(QCC_MEMCHECK)
 endif(QCC_MEMCHECK)
 
 qcc_test(test_arena)
+qcc_test(test_common)
 qcc_test(test_context)
 qcc_test(test_qcc_uint)

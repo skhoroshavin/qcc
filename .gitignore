@@ -34,4 +34,4 @@
 
 # Misc
 *.user
-build/
+build*
