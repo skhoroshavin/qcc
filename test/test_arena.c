@@ -39,7 +39,7 @@ TEST(arena_copy_out_of_mem)
 {
     GIVEN_ARENA(arena);
     GIVEN_UINT(size, greater_than, qcc_arena_memory_available(arena));
-    void *data = (void *)0xDEADBEEF;
+    void *data = (void *)0xDEADBEEFCAFE;
 
     void *ptr = qcc_arena_copy(arena, data, size);
     ASSERT(ptr == 0);

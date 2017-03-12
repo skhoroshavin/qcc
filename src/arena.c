@@ -97,7 +97,8 @@ void qcc_arena_begin_array(struct qcc_arena *arena)
     arena->array_end = arena->array_start;
 }
 
-void *qcc_arena_append_array(struct qcc_arena *arena, void *data, size_t size)
+void *qcc_arena_append_array(struct qcc_arena *arena, const void *data,
+                             size_t size)
 {
     if (size > qcc_arena_memory_available(arena)) return 0;
 
