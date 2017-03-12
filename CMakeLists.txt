@@ -19,7 +19,6 @@ endif(NOT MSVC)
 
 if(QCC_GEN_COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG")
 endif(QCC_GEN_COVERAGE)
 
 ############################################################

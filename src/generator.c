@@ -15,7 +15,8 @@ void qcc_generate(struct qcc_generator *self, void *data)
 struct qcc_generator_value_from
 {
     struct qcc_generator base;
-    const void *data;
+    size_t stride;
+    const uint8_t *data;
     size_t count;
 };
 
@@ -25,19 +26,20 @@ static void qcc_generate_value_from(struct qcc_generator *self, void *data)
         (struct qcc_generator_value_from *)self;
 
     size_t index = qcc_context_rand_value(self->context) % value_from->count;
-    memcpy(data, (char *)value_from->data + index * self->type_size,
+    memcpy(data, value_from->data + index * value_from->stride,
            self->type_size);
 }
 
 struct qcc_generator *qcc_gen_value_from(struct qcc_context *ctx,
-                                         size_t item_size, const void *data,
-                                         size_t count)
+                                         size_t item_size, size_t item_stride,
+                                         const void *data, size_t count)
 {
     QCC_ARENA_POD(ctx->arena, qcc_generator_value_from, res);
     res->base.context = ctx;
     res->base.type_size = item_size;
     res->base.generate = qcc_generate_value_from;
-    res->data = data;
+    res->stride = item_stride;
+    res->data = (const uint8_t *)data;
     res->count = count;
     return &res->base;
 }
@@ -86,7 +88,46 @@ struct qcc_generator *qcc_gen_one_of(struct qcc_context *ctx, ...)
         qcc_arena_append_array(ctx->arena, &gen, sizeof(gen));
     }
     va_end(args);
-    res->generators = qcc_arena_end_array(ctx->arena);
+    res->generators = (struct qcc_generator **)qcc_arena_end_array(ctx->arena);
 
+    return &res->base;
+}
+
+/*
+ * Generator transform
+ */
+
+struct qcc_generator_transform
+{
+    struct qcc_generator base;
+    struct qcc_generator *src_gen;
+    qcc_transform_fn transform;
+    const void *params;
+};
+
+static void qcc_generate_transform(struct qcc_generator *self, void *data)
+{
+    struct qcc_generator_transform *transform =
+        (struct qcc_generator_transform *)self;
+
+    uint8_t tmp[128];
+    assert(transform->src_gen->type_size <= 128);
+    qcc_generate(transform->src_gen, tmp);
+    transform->transform(transform->params, tmp, data);
+}
+
+struct qcc_generator *qcc_gen_transform(struct qcc_context *ctx,
+                                        size_t item_size,
+                                        struct qcc_generator *src_gen,
+                                        qcc_transform_fn transform,
+                                        const void *params)
+{
+    QCC_ARENA_POD(ctx->arena, qcc_generator_transform, res);
+    res->base.context = ctx;
+    res->base.type_size = item_size;
+    res->base.generate = qcc_generate_transform;
+    res->src_gen = src_gen;
+    res->transform = transform;
+    res->params = params;
     return &res->base;
 }

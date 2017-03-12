@@ -17,10 +17,8 @@ TEST_P(uint_gen_large, test_t)
 
     const qcc_uint limit = qcc_uint_max(sizeof(test_t)) >> 4;
     for (size_t i = 0; i < 100; ++i)
-    {
         if (qcc_rand_unsigned(ctx, test_t, any) > limit) return;
-    }
-    ASSERT(0 && "Failed to generate large enough uint");
+    FAIL("Generated uints are not large enough");
 }
 
 TEST_P(generate_uint, test_t)
@@ -31,6 +29,16 @@ TEST_P(generate_uint, test_t)
 
     test_t value = qcc_rand_unsigned(ctx, test_t, in_range, min, max);
     ASSERT_UINT(value, <=, qcc_uint_max(sizeof(test_t)));
+}
+
+TEST_P(gen_uint_from_array, test_t)
+{
+    GIVEN_UNSIGNED_ARRAY(test_t, values, non_empty, any);
+    GIVEN_UNSIGNED(test_t, value, from_array, values.data, values.size);
+
+    for (size_t i = 0; i != values.size; ++i)
+        if (values.data[i] == value) return;
+    FAIL("Generated value is not contained in original array");
 }
 
 TEST_P(gen_uint_equal_to, test_t)
@@ -116,6 +124,7 @@ TEST_GROUP_P(qcc_uint, test_t)
     RUN_TEST_P(uint_gen_large, test_t);
     RUN_TEST_P(generate_uint, test_t);
 
+    RUN_TEST_P(gen_uint_from_array, test_t);
     RUN_TEST_P(gen_uint_equal_to, test_t);
     RUN_TEST_P(gen_uint_in_range, test_t);
     RUN_TEST_P(gen_uint_less_than, test_t);

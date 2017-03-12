@@ -38,6 +38,15 @@ int qcc_main(int argc, const char *argv[], qcc_main_fn main_fn);
     void *name = qcc_arena_alloc(_ctx->arena, size);                           \
     qcc_context_rand(_ctx, name, size);
 
+#define FAIL(fmt, ...)                                                         \
+    do                                                                         \
+    {                                                                          \
+        const char *msg = qcc_arena_sprintf(_ctx->arena, fmt, ##__VA_ARGS__);  \
+        qcc_context_fail(_ctx, "\"%s\" in %s (%s, line %d)\n", msg,            \
+                         __FUNCTION__, __FILE__, __LINE__);                    \
+        return;                                                                \
+    } while (0)
+
 #define ASSUME(cond)                                                           \
     do                                                                         \
     {                                                                          \

@@ -16,6 +16,56 @@ static qcc_uint _limit_uint(size_t size, qcc_uint value)
     return value > qcc_uint_max(size) ? qcc_uint_max(size) : value;
 }
 
+struct _transform_uint_params
+{
+    size_t src_size;
+    size_t dst_size;
+};
+
+static void _transform_uint(const struct _transform_uint_params *params,
+                            const void *src, void *dst)
+{
+    qcc_uint value;
+
+    switch (params->src_size)
+    {
+    case 1:
+        value = *(const uint8_t *)src;
+        break;
+    case 2:
+        value = *(const uint16_t *)src;
+        break;
+    case 4:
+        value = *(const uint32_t *)src;
+        break;
+    case 8:
+        value = *(const uint64_t *)src;
+        break;
+    default:
+        /* TODO: Raise error */
+        value = 0;
+    }
+
+    switch (params->dst_size)
+    {
+    case 1:
+        *(uint8_t *)dst = value;
+        break;
+    case 2:
+        *(uint16_t *)dst = value;
+        break;
+    case 4:
+        *(uint32_t *)dst = value;
+        break;
+    case 8:
+        *(uint64_t *)dst = value;
+        break;
+    default:
+        /* TODO: Raise error */
+        memset(dst, 0, params->dst_size);
+    }
+}
+
 static void _generate_uint_in_range(struct qcc_generator *self, void *data)
 {
     qcc_uint min = ((struct _generator_uint_in_range *)self)->min;
@@ -56,10 +106,27 @@ static struct qcc_generator *_gen_uint_in_range(struct qcc_context *ctx,
     return &res->base;
 }
 
+struct qcc_generator *_qcc_gen_uint_from_array(struct qcc_context *ctx,
+                                               size_t size, size_t src_size,
+                                               const void *data, size_t count)
+{
+    struct qcc_generator *gen_value =
+        qcc_gen_value_from(ctx, src_size, src_size, data, count);
+
+    QCC_ARENA_POD(ctx->arena, _transform_uint_params, params);
+    params->src_size = src_size;
+    params->dst_size = size;
+
+    return qcc_gen_transform(ctx, size, gen_value,
+                             (qcc_transform_fn)_transform_uint, params);
+}
+
 struct qcc_generator *qcc_gen_uint_equal_to(struct qcc_context *ctx,
                                             size_t size, qcc_uint value)
 {
-    return _gen_uint_in_range(ctx, size, value, value);
+    const qcc_uint *data =
+        (const qcc_uint *)qcc_arena_copy(ctx->arena, &value, sizeof(value));
+    return qcc_gen_uint_from_array(ctx, size, data, 1);
 }
 
 struct qcc_generator *qcc_gen_uint_in_range(struct qcc_context *ctx,
