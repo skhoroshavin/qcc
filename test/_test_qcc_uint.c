@@ -34,7 +34,8 @@ TEST_P(generate_uint, test_t)
 TEST_P(gen_uint_from_array, test_t)
 {
     GIVEN_UNSIGNED_ARRAY(test_t, values, non_empty, any);
-    GIVEN_UNSIGNED(test_t, value, from_array, values.data, values.size);
+    GIVEN_UNSIGNED(test_t, value, from_array, sizeof(test_t), values.data,
+                   values.size);
 
     for (size_t i = 0; i != values.size; ++i)
         if (values.data[i] == value) return;

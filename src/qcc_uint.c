@@ -88,9 +88,9 @@ static qcc_generator_ptr _gen_uint_in_range(struct qcc_context *ctx,
                              (qcc_transform_fn)_transform_uint, 0);
 }
 
-qcc_generator_ptr _qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
-                                           size_t src_size, const void *data,
-                                           size_t count)
+qcc_generator_ptr qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
+                                          size_t src_size, const void *data,
+                                          size_t count)
 {
     qcc_generator_ptr gen_value =
         qcc_gen_value_from(ctx, src_size, src_size, data, count);
@@ -102,9 +102,8 @@ qcc_generator_ptr _qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
 qcc_generator_ptr qcc_gen_uint_equal_to(struct qcc_context *ctx, size_t size,
                                         qcc_uint value)
 {
-    const qcc_uint *data =
-        (const qcc_uint *)qcc_arena_copy(ctx->arena, &value, sizeof(value));
-    return qcc_gen_uint_from_array(ctx, size, data, 1);
+    const void *data = qcc_arena_copy(ctx->arena, &value, sizeof(value));
+    return qcc_gen_uint_from_array(ctx, size, sizeof(value), data, 1);
 }
 
 qcc_generator_ptr qcc_gen_uint_in_range(struct qcc_context *ctx, size_t size,

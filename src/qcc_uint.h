@@ -6,12 +6,9 @@
 
 QCC_BEGIN_HEADER
 
-qcc_generator_ptr _qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
-                                           size_t src_size, const void *data,
-                                           size_t count);
-#define qcc_gen_uint_from_array(ctx, size, data, count)                        \
-    _qcc_gen_uint_from_array(ctx, size, sizeof(data[0]), data, count)
-
+qcc_generator_ptr qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
+                                          size_t src_size, const void *data,
+                                          size_t count);
 qcc_generator_ptr qcc_gen_uint_equal_to(struct qcc_context *ctx, size_t size,
                                         qcc_uint value);
 qcc_generator_ptr qcc_gen_uint_in_range(struct qcc_context *ctx, size_t size,
