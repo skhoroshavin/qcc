@@ -26,15 +26,15 @@ struct qcc_generator_array_of
 {
     struct qcc_generator base;
     struct qcc_array_size size;
-    struct qcc_generator *item_gen;
+    qcc_generator_ptr item_gen;
 };
 
-static void qcc_generate_array_of(struct qcc_generator *self, void *data)
+static void qcc_generate_array_of(qcc_generator_ptr self, void *data)
 {
     struct qcc_arena *arena = self->context->arena;
     struct qcc_generator_array_of *array_of =
         (struct qcc_generator_array_of *)self;
-    struct qcc_generator *item_gen = array_of->item_gen;
+    qcc_generator_ptr item_gen = array_of->item_gen;
 
     struct qcc_array *array = (struct qcc_array *)data;
     array->data =
@@ -57,9 +57,9 @@ static void qcc_generate_array_of(struct qcc_generator *self, void *data)
     }
 }
 
-struct qcc_generator *qcc_gen_array_of(struct qcc_context *ctx,
-                                       struct qcc_array_size size,
-                                       struct qcc_generator *item_gen)
+qcc_generator_ptr qcc_gen_array_of(struct qcc_context *ctx,
+                                   struct qcc_array_size size,
+                                   qcc_generator_ptr item_gen)
 {
     QCC_ARENA_POD(ctx->arena, qcc_generator_array_of, res);
     res->base.context = ctx;

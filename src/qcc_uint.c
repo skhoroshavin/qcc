@@ -66,7 +66,7 @@ static void _transform_uint(const struct _transform_uint_params *params,
     }
 }
 
-static void _generate_uint_in_range(struct qcc_generator *self, void *data)
+static void _generate_uint_in_range(qcc_generator_ptr self, void *data)
 {
     qcc_uint min = ((struct _generator_uint_in_range *)self)->min;
     qcc_uint max = ((struct _generator_uint_in_range *)self)->max;
@@ -93,9 +93,9 @@ static void _generate_uint_in_range(struct qcc_generator *self, void *data)
     }
 }
 
-static struct qcc_generator *_gen_uint_in_range(struct qcc_context *ctx,
-                                                size_t size, qcc_uint min,
-                                                qcc_uint max)
+static qcc_generator_ptr _gen_uint_in_range(struct qcc_context *ctx,
+                                            size_t size, qcc_uint min,
+                                            qcc_uint max)
 {
     QCC_ARENA_POD(ctx->arena, _generator_uint_in_range, res);
     res->base.context = ctx;
@@ -106,11 +106,11 @@ static struct qcc_generator *_gen_uint_in_range(struct qcc_context *ctx,
     return &res->base;
 }
 
-struct qcc_generator *_qcc_gen_uint_from_array(struct qcc_context *ctx,
-                                               size_t size, size_t src_size,
-                                               const void *data, size_t count)
+qcc_generator_ptr _qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
+                                           size_t src_size, const void *data,
+                                           size_t count)
 {
-    struct qcc_generator *gen_value =
+    qcc_generator_ptr gen_value =
         qcc_gen_value_from(ctx, src_size, src_size, data, count);
 
     QCC_ARENA_POD(ctx->arena, _transform_uint_params, params);
@@ -121,17 +121,16 @@ struct qcc_generator *_qcc_gen_uint_from_array(struct qcc_context *ctx,
                              (qcc_transform_fn)_transform_uint, params);
 }
 
-struct qcc_generator *qcc_gen_uint_equal_to(struct qcc_context *ctx,
-                                            size_t size, qcc_uint value)
+qcc_generator_ptr qcc_gen_uint_equal_to(struct qcc_context *ctx, size_t size,
+                                        qcc_uint value)
 {
     const qcc_uint *data =
         (const qcc_uint *)qcc_arena_copy(ctx->arena, &value, sizeof(value));
     return qcc_gen_uint_from_array(ctx, size, data, 1);
 }
 
-struct qcc_generator *qcc_gen_uint_in_range(struct qcc_context *ctx,
-                                            size_t size, qcc_uint min,
-                                            qcc_uint max)
+qcc_generator_ptr qcc_gen_uint_in_range(struct qcc_context *ctx, size_t size,
+                                        qcc_uint min, qcc_uint max)
 {
     min = _limit_uint(size, min);
     max = _limit_uint(size, max);
@@ -149,32 +148,32 @@ struct qcc_generator *qcc_gen_uint_in_range(struct qcc_context *ctx,
                           _gen_uint_in_range(ctx, size, min, max), (void *)0);
 }
 
-struct qcc_generator *qcc_gen_uint_less_than(struct qcc_context *ctx,
-                                             size_t size, qcc_uint value)
+qcc_generator_ptr qcc_gen_uint_less_than(struct qcc_context *ctx, size_t size,
+                                         qcc_uint value)
 {
     return qcc_gen_uint_in_range(ctx, size, 0, value - 1);
 }
 
-struct qcc_generator *qcc_gen_uint_greater_than(struct qcc_context *ctx,
-                                                size_t size, qcc_uint value)
+qcc_generator_ptr qcc_gen_uint_greater_than(struct qcc_context *ctx,
+                                            size_t size, qcc_uint value)
 {
     return qcc_gen_uint_in_range(ctx, size, value + 1, QCC_UINT_MAX);
 }
 
-struct qcc_generator *qcc_gen_uint_not_less_than(struct qcc_context *ctx,
-                                                 size_t size, qcc_uint value)
+qcc_generator_ptr qcc_gen_uint_not_less_than(struct qcc_context *ctx,
+                                             size_t size, qcc_uint value)
 {
     return qcc_gen_uint_in_range(ctx, size, value, QCC_UINT_MAX);
 }
 
-struct qcc_generator *qcc_gen_uint_not_greater_than(struct qcc_context *ctx,
-                                                    size_t size, qcc_uint value)
+qcc_generator_ptr qcc_gen_uint_not_greater_than(struct qcc_context *ctx,
+                                                size_t size, qcc_uint value)
 {
     return qcc_gen_uint_in_range(ctx, size, 0, value);
 }
 
-struct qcc_generator *qcc_gen_uint_not_equal_to(struct qcc_context *ctx,
-                                                size_t size, qcc_uint value)
+qcc_generator_ptr qcc_gen_uint_not_equal_to(struct qcc_context *ctx,
+                                            size_t size, qcc_uint value)
 {
     if (value == 0) return qcc_gen_uint_greater_than(ctx, size, 0);
     if (value == qcc_uint_max(size))
@@ -184,12 +183,12 @@ struct qcc_generator *qcc_gen_uint_not_equal_to(struct qcc_context *ctx,
                           (void *)0);
 }
 
-struct qcc_generator *qcc_gen_uint_any(struct qcc_context *ctx, size_t size)
+qcc_generator_ptr qcc_gen_uint_any(struct qcc_context *ctx, size_t size)
 {
     return qcc_gen_uint_in_range(ctx, size, 0, QCC_UINT_MAX);
 }
 
-qcc_uint qcc_generate_uint(struct qcc_generator *gen)
+qcc_uint qcc_generate_uint(qcc_generator_ptr gen)
 {
     switch (gen->type_size)
     {

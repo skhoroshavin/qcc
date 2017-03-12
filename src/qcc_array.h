@@ -22,8 +22,8 @@ extern struct qcc_array_size qcc_array_non_empty;
 struct qcc_array_size qcc_array_fixed_size(size_t size);
 struct qcc_array_size qcc_array_smaller_than(size_t size);
 
-struct qcc_generator *qcc_gen_array_of(struct qcc_context *ctx,
-                                       struct qcc_array_size size,
-                                       struct qcc_generator *item_gen);
+qcc_generator_ptr qcc_gen_array_of(struct qcc_context *ctx,
+                                   struct qcc_array_size size,
+                                   qcc_generator_ptr item_gen);
 
 QCC_END_HEADER

@@ -6,7 +6,8 @@
 QCC_BEGIN_HEADER
 
 struct qcc_generator;
-typedef void (*qcc_generate_fn)(struct qcc_generator *self, void *data);
+typedef const struct qcc_generator *qcc_generator_ptr;
+typedef void (*qcc_generate_fn)(qcc_generator_ptr self, void *data);
 
 struct qcc_generator
 {
@@ -15,19 +16,18 @@ struct qcc_generator
     qcc_generate_fn generate;
 };
 
-void qcc_generate(struct qcc_generator *self, void *data);
+void qcc_generate(qcc_generator_ptr self, void *data);
 
-struct qcc_generator *qcc_gen_value_from(struct qcc_context *ctx,
-                                         size_t item_size, size_t item_stride,
-                                         const void *data, size_t count);
-struct qcc_generator *qcc_gen_one_of(struct qcc_context *ctx, ...);
+qcc_generator_ptr qcc_gen_value_from(struct qcc_context *ctx, size_t item_size,
+                                     size_t item_stride, const void *data,
+                                     size_t count);
+qcc_generator_ptr qcc_gen_one_of(struct qcc_context *ctx, ...);
 
 typedef void (*qcc_transform_fn)(const void *params, const void *src,
                                  const void *dst);
-struct qcc_generator *qcc_gen_transform(struct qcc_context *ctx,
-                                        size_t item_size,
-                                        struct qcc_generator *src_gen,
-                                        qcc_transform_fn transform,
-                                        const void *params);
+qcc_generator_ptr qcc_gen_transform(struct qcc_context *ctx, size_t item_size,
+                                    qcc_generator_ptr src_gen,
+                                    qcc_transform_fn transform,
+                                    const void *params);
 
 QCC_END_HEADER

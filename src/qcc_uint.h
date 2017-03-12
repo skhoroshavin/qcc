@@ -6,31 +6,29 @@
 
 QCC_BEGIN_HEADER
 
-struct qcc_generator *_qcc_gen_uint_from_array(struct qcc_context *ctx,
-                                               size_t size, size_t src_size,
-                                               const void *data, size_t count);
+qcc_generator_ptr _qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
+                                           size_t src_size, const void *data,
+                                           size_t count);
 #define qcc_gen_uint_from_array(ctx, size, data, count)                        \
     _qcc_gen_uint_from_array(ctx, size, sizeof(data[0]), data, count)
 
-struct qcc_generator *qcc_gen_uint_equal_to(struct qcc_context *ctx,
+qcc_generator_ptr qcc_gen_uint_equal_to(struct qcc_context *ctx, size_t size,
+                                        qcc_uint value);
+qcc_generator_ptr qcc_gen_uint_in_range(struct qcc_context *ctx, size_t size,
+                                        qcc_uint min, qcc_uint max);
+qcc_generator_ptr qcc_gen_uint_less_than(struct qcc_context *ctx, size_t size,
+                                         qcc_uint value);
+qcc_generator_ptr qcc_gen_uint_greater_than(struct qcc_context *ctx,
                                             size_t size, qcc_uint value);
-struct qcc_generator *qcc_gen_uint_in_range(struct qcc_context *ctx,
-                                            size_t size, qcc_uint min,
-                                            qcc_uint max);
-struct qcc_generator *qcc_gen_uint_less_than(struct qcc_context *ctx,
+qcc_generator_ptr qcc_gen_uint_not_less_than(struct qcc_context *ctx,
                                              size_t size, qcc_uint value);
-struct qcc_generator *qcc_gen_uint_greater_than(struct qcc_context *ctx,
+qcc_generator_ptr qcc_gen_uint_not_greater_than(struct qcc_context *ctx,
                                                 size_t size, qcc_uint value);
-struct qcc_generator *qcc_gen_uint_not_less_than(struct qcc_context *ctx,
-                                                 size_t size, qcc_uint value);
-struct qcc_generator *qcc_gen_uint_not_greater_than(struct qcc_context *ctx,
-                                                    size_t size,
-                                                    qcc_uint value);
-struct qcc_generator *qcc_gen_uint_not_equal_to(struct qcc_context *ctx,
-                                                size_t size, qcc_uint value);
-struct qcc_generator *qcc_gen_uint_any(struct qcc_context *ctx, size_t size);
+qcc_generator_ptr qcc_gen_uint_not_equal_to(struct qcc_context *ctx,
+                                            size_t size, qcc_uint value);
+qcc_generator_ptr qcc_gen_uint_any(struct qcc_context *ctx, size_t size);
 
-qcc_uint qcc_generate_uint(struct qcc_generator *gen);
+qcc_uint qcc_generate_uint(qcc_generator_ptr gen);
 
 #define qcc_rand_unsigned(ctx, type, cond, ...)                                \
     (type) qcc_generate_uint(                                                  \
