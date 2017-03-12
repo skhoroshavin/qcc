@@ -16,53 +16,48 @@ static qcc_uint _limit_uint(size_t size, qcc_uint value)
     return value > qcc_uint_max(size) ? qcc_uint_max(size) : value;
 }
 
-struct _transform_uint_params
+static void _transform_uint(const void *params, const void *src_data,
+                            size_t src_size, void *dst_data, size_t dst_size)
 {
-    size_t src_size;
-    size_t dst_size;
-};
-
-static void _transform_uint(const struct _transform_uint_params *params,
-                            const void *src, void *dst)
-{
+    (void)params;
     qcc_uint value;
 
-    switch (params->src_size)
+    switch (src_size)
     {
     case 1:
-        value = *(const uint8_t *)src;
+        value = *(const uint8_t *)src_data;
         break;
     case 2:
-        value = *(const uint16_t *)src;
+        value = *(const uint16_t *)src_data;
         break;
     case 4:
-        value = *(const uint32_t *)src;
+        value = *(const uint32_t *)src_data;
         break;
     case 8:
-        value = *(const uint64_t *)src;
+        value = *(const uint64_t *)src_data;
         break;
     default:
         /* TODO: Raise error */
         value = 0;
     }
 
-    switch (params->dst_size)
+    switch (dst_size)
     {
     case 1:
-        *(uint8_t *)dst = value;
+        *(uint8_t *)dst_data = (uint8_t)value;
         break;
     case 2:
-        *(uint16_t *)dst = value;
+        *(uint16_t *)dst_data = (uint16_t)value;
         break;
     case 4:
-        *(uint32_t *)dst = value;
+        *(uint32_t *)dst_data = (uint32_t)value;
         break;
     case 8:
-        *(uint64_t *)dst = value;
+        *(uint64_t *)dst_data = (uint64_t)value;
         break;
     default:
         /* TODO: Raise error */
-        memset(dst, 0, params->dst_size);
+        memset(dst_data, 0, dst_size);
     }
 }
 
@@ -75,22 +70,7 @@ static void _generate_uint_in_range(qcc_generator_ptr self, void *data)
     qcc_context_rand(self->context, &result, sizeof(result));
     qcc_uint range = max - min + 1;
     if (range) result = result % range + min;
-
-    switch (self->type_size)
-    {
-    case 1:
-        *((uint8_t *)data) = result;
-        return;
-    case 2:
-        *((uint16_t *)data) = result;
-        return;
-    case 4:
-        *((uint32_t *)data) = result;
-        return;
-    case 8:
-        *((uint64_t *)data) = result;
-        return;
-    }
+    *((qcc_uint *)data) = result;
 }
 
 static qcc_generator_ptr _gen_uint_in_range(struct qcc_context *ctx,
@@ -99,11 +79,13 @@ static qcc_generator_ptr _gen_uint_in_range(struct qcc_context *ctx,
 {
     QCC_ARENA_POD(ctx->arena, _generator_uint_in_range, res);
     res->base.context = ctx;
-    res->base.type_size = size;
+    res->base.type_size = sizeof(qcc_uint);
     res->base.generate = _generate_uint_in_range;
     res->min = _limit_uint(size, min);
     res->max = _limit_uint(size, max);
-    return &res->base;
+
+    return qcc_gen_transform(ctx, size, &res->base,
+                             (qcc_transform_fn)_transform_uint, 0);
 }
 
 qcc_generator_ptr _qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
@@ -113,12 +95,8 @@ qcc_generator_ptr _qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
     qcc_generator_ptr gen_value =
         qcc_gen_value_from(ctx, src_size, src_size, data, count);
 
-    QCC_ARENA_POD(ctx->arena, _transform_uint_params, params);
-    params->src_size = src_size;
-    params->dst_size = size;
-
     return qcc_gen_transform(ctx, size, gen_value,
-                             (qcc_transform_fn)_transform_uint, params);
+                             (qcc_transform_fn)_transform_uint, 0);
 }
 
 qcc_generator_ptr qcc_gen_uint_equal_to(struct qcc_context *ctx, size_t size,

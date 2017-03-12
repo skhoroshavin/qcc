@@ -23,8 +23,9 @@ qcc_generator_ptr qcc_gen_value_from(struct qcc_context *ctx, size_t item_size,
                                      size_t count);
 qcc_generator_ptr qcc_gen_one_of(struct qcc_context *ctx, ...);
 
-typedef void (*qcc_transform_fn)(const void *params, const void *src,
-                                 const void *dst);
+typedef void (*qcc_transform_fn)(const void *params, const void *src_data,
+                                 size_t src_size, void *dst_data,
+                                 size_t dst_size);
 qcc_generator_ptr qcc_gen_transform(struct qcc_context *ctx, size_t item_size,
                                     qcc_generator_ptr src_gen,
                                     qcc_transform_fn transform,

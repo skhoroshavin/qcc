@@ -113,7 +113,8 @@ static void qcc_generate_transform(qcc_generator_ptr self, void *data)
     uint8_t tmp[128];
     assert(transform->src_gen->type_size <= 128);
     qcc_generate(transform->src_gen, tmp);
-    transform->transform(transform->params, tmp, data);
+    transform->transform(transform->params, tmp, transform->src_gen->type_size,
+                         data, self->type_size);
 }
 
 qcc_generator_ptr qcc_gen_transform(struct qcc_context *ctx, size_t item_size,
