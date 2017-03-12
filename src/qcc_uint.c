@@ -84,8 +84,7 @@ static qcc_generator_ptr _gen_uint_in_range(struct qcc_context *ctx,
     res->min = _limit_uint(size, min);
     res->max = _limit_uint(size, max);
 
-    return qcc_gen_transform(ctx, size, &res->base,
-                             (qcc_transform_fn)_transform_uint, 0);
+    return qcc_gen_transform(ctx, size, &res->base, _transform_uint, 0);
 }
 
 qcc_generator_ptr qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
@@ -95,8 +94,7 @@ qcc_generator_ptr qcc_gen_uint_from_array(struct qcc_context *ctx, size_t size,
     qcc_generator_ptr gen_value =
         qcc_gen_value_from(ctx, src_size, src_size, data, count);
 
-    return qcc_gen_transform(ctx, size, gen_value,
-                             (qcc_transform_fn)_transform_uint, 0);
+    return qcc_gen_transform(ctx, size, gen_value, _transform_uint, 0);
 }
 
 qcc_generator_ptr qcc_gen_uint_equal_to(struct qcc_context *ctx, size_t size,

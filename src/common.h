@@ -23,6 +23,9 @@ QCC_BEGIN_HEADER
 #define QCC_VPRINTF __attribute__((format_arg(2)))
 #endif /* WIN32 */
 
+#define PP_CONCAT_I(A, B) A##B
+#define PP_CONCAT(A, B) PP_CONCAT_I(A, B)
+
 #ifndef count_of
 #define count_of(a) (sizeof(a) / sizeof(a[0]))
 #endif /* count_of */
@@ -34,7 +37,8 @@ typedef uint64_t qcc_uint;
 #define QCC_INT_MAX INT64_MAX
 #define QCC_UINT_MAX UINT64_MAX
 
-#define qcc_is_unsigned_type(type) (((type)-1) > 0)
+#define qcc_is_unsigned(type) (((type)-1) > 0)
+#define qcc_is_float(type) (((type)1.2) != 1)
 
 qcc_int qcc_int_max(size_t size);
 qcc_int qcc_int_min(size_t size);

@@ -16,15 +16,10 @@ int qcc_main(int argc, const char *argv[], qcc_main_fn main_fn);
 #define RUN_TEST(name) qcc_engine_run_test(_eng, #name, name)
 #define RUN_GROUP(name) name(_eng)
 
-#define _TEST_P(name, param) TEST(name##_##param)
-#define _TEST_GROUP_P(name, param) TEST_GROUP(name##_##param)
-#define TEST_P(name, param) _TEST_P(name, param)
-#define TEST_GROUP_P(name, param) _TEST_GROUP_P(name, param)
-
-#define _RUN_TEST_P(name, param) RUN_TEST(name##_##param)
-#define _RUN_GROUP_P(name, param) RUN_GROUP(name##_##param)
-#define RUN_TEST_P(name, param) _RUN_TEST_P(name, param)
-#define RUN_GROUP_P(name, param) _RUN_GROUP_P(name, param)
+#define TEST_P(name, param) TEST(PP_CONCAT(name##_, param))
+#define TEST_GROUP_P(name, param) TEST_GROUP(PP_CONCAT(name##_, param))
+#define RUN_TEST_P(name, param) RUN_TEST(PP_CONCAT(name##_, param))
+#define RUN_GROUP_P(name, param) RUN_GROUP(PP_CONCAT(name##_, param))
 
 #define TEST_MAIN()                                                            \
     void qcc_test_main(struct qcc_engine *_eng);                               \

@@ -50,47 +50,11 @@ qcc_uint qcc_generate_uint(qcc_generator_ptr gen);
 #define qcc_rand_uint(ctx, cond, ...)                                          \
     qcc_rand_unsigned(ctx, unsigned, cond, ##__VA_ARGS__)
 
-#define qcc_rand_uint8(ctx, cond, ...)                                         \
-    qcc_rand_unsigned(ctx, uint8_t, cond, ##__VA_ARGS__)
-
-#define qcc_rand_uint16(ctx, cond, ...)                                        \
-    qcc_rand_unsigned(ctx, uint16_t, cond, ##__VA_ARGS__)
-
-#define qcc_rand_uint32(ctx, cond, ...)                                        \
-    qcc_rand_unsigned(ctx, uint32_t, cond, ##__VA_ARGS__)
-
-#define qcc_rand_uint64(ctx, cond, ...)                                        \
-    qcc_rand_unsigned(ctx, uint64_t, cond, ##__VA_ARGS__)
-
 #define GIVEN_UINT(name, cond, ...)                                            \
     GIVEN_UNSIGNED(unsigned, name, cond, ##__VA_ARGS__);
 
-#define GIVEN_UINT8(name, cond, ...)                                           \
-    GIVEN_UNSIGNED(uint8_t, name, cond, ##__VA_ARGS__);
-
-#define GIVEN_UINT16(name, cond, ...)                                          \
-    GIVEN_UNSIGNED(uint16_t, name, cond, ##__VA_ARGS__);
-
-#define GIVEN_UINT32(name, cond, ...)                                          \
-    GIVEN_UNSIGNED(uint32_t, name, cond, ##__VA_ARGS__);
-
-#define GIVEN_UINT64(name, cond, ...)                                          \
-    GIVEN_UNSIGNED(uint64_t, name, cond, ##__VA_ARGS__);
-
 #define GIVEN_UINT_ARRAY(name, asize, cond, ...)                               \
     GIVEN_UNSIGNED_ARRAY(unsigned, name, asize, cond, ##__VA_ARGS__)
-
-#define GIVEN_UINT8_ARRAY(name, asize, cond, ...)                              \
-    GIVEN_UNSIGNED_ARRAY(uint8_t, name, asize, cond, ##__VA_ARGS__)
-
-#define GIVEN_UINT16_ARRAY(name, asize, cond, ...)                             \
-    GIVEN_UNSIGNED_ARRAY(uint16_t, name, asize, cond, ##__VA_ARGS__)
-
-#define GIVEN_UINT32_ARRAY(name, asize, cond, ...)                             \
-    GIVEN_UNSIGNED_ARRAY(uint32_t, name, asize, cond, ##__VA_ARGS__)
-
-#define GIVEN_UINT64_ARRAY(name, asize, cond, ...)                             \
-    GIVEN_UNSIGNED_ARRAY(uint64_t, name, asize, cond, ##__VA_ARGS__)
 
 #define ASSERT_UINT(got, cond, exp)                                            \
     do                                                                         \

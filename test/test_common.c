@@ -1,17 +1,32 @@
 
 #include "qcc.h"
 
-TEST(is_signed_type)
+TEST(is_unsigned)
 {
-    ASSERT(qcc_is_unsigned_type(uint8_t));
-    ASSERT(qcc_is_unsigned_type(uint16_t));
-    ASSERT(qcc_is_unsigned_type(uint32_t));
-    ASSERT(qcc_is_unsigned_type(uint64_t));
+    ASSERT(qcc_is_unsigned(uint8_t));
+    ASSERT(qcc_is_unsigned(uint16_t));
+    ASSERT(qcc_is_unsigned(uint32_t));
+    ASSERT(qcc_is_unsigned(uint64_t));
 
-    ASSERT(!qcc_is_unsigned_type(int8_t));
-    ASSERT(!qcc_is_unsigned_type(int16_t));
-    ASSERT(!qcc_is_unsigned_type(int32_t));
-    ASSERT(!qcc_is_unsigned_type(int64_t));
+    ASSERT(!qcc_is_unsigned(int8_t));
+    ASSERT(!qcc_is_unsigned(int16_t));
+    ASSERT(!qcc_is_unsigned(int32_t));
+    ASSERT(!qcc_is_unsigned(int64_t));
+}
+
+TEST(is_float)
+{
+    ASSERT(!qcc_is_float(uint8_t));
+    ASSERT(!qcc_is_float(uint16_t));
+    ASSERT(!qcc_is_float(uint32_t));
+    ASSERT(!qcc_is_float(uint64_t));
+    ASSERT(!qcc_is_float(int8_t));
+    ASSERT(!qcc_is_float(int16_t));
+    ASSERT(!qcc_is_float(int32_t));
+    ASSERT(!qcc_is_float(int64_t));
+
+    ASSERT(qcc_is_float(float));
+    ASSERT(qcc_is_float(double));
 }
 
 TEST(int_max)
@@ -40,7 +55,8 @@ TEST(uint_max)
 
 TEST_MAIN()
 {
-    RUN_TEST(is_signed_type);
+    RUN_TEST(is_unsigned);
+    RUN_TEST(is_float);
 
     RUN_TEST(int_max);
     RUN_TEST(int_min);
