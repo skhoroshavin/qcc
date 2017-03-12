@@ -113,7 +113,7 @@ TEST_P(gen_uint_non_empty_array, test_t)
 
 TEST_P(gen_uint_fixed_size_array, test_t)
 {
-    GIVEN_UNSIGNED(test_t, size, less_than, 32);
+    GIVEN_UNSIGNED(size_t, size, less_than, 32);
     GIVEN_UNSIGNED_ARRAY(test_t, test, fixed_size(size), any);
     ASSERT_UINT(test.size, ==, size);
 }

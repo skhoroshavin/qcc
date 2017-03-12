@@ -40,7 +40,8 @@ const char *qcc_arena_sprintf(struct qcc_arena *arena, const char *fmt,
                               ...) QCC_PRINTF;
 
 void qcc_arena_begin_array(struct qcc_arena *arena);
-void *qcc_arena_append_array(struct qcc_arena *arena, void *data, size_t size);
+void *qcc_arena_append_array(struct qcc_arena *arena, const void *data,
+                             size_t size);
 void *qcc_arena_end_array(struct qcc_arena *arena);
 
 #define QCC_ARENA_POD(arena, type, name)                                       \
