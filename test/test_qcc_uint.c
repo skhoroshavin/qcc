@@ -1,17 +1,15 @@
 
-#include "qcc.h"
-
 #define test_t uint8_t
-#include "test_qcc_uint.inl"
+#include "_test_qcc_uint.c"
 
 #define test_t uint16_t
-#include "test_qcc_uint.inl"
+#include "_test_qcc_uint.c"
 
 #define test_t uint32_t
-#include "test_qcc_uint.inl"
+#include "_test_qcc_uint.c"
 
 #define test_t uint64_t
-#include "test_qcc_uint.inl"
+#include "_test_qcc_uint.c"
 
 TEST_MAIN()
 {

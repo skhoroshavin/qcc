@@ -16,14 +16,13 @@ static qcc_uint _limit_uint(size_t size, qcc_uint value)
     return value > qcc_uint_max(size) ? qcc_uint_max(size) : value;
 }
 
-static void _generate_uint_in_range(struct qcc_generator *self,
-                                    struct qcc_context *ctx, void *data)
+static void _generate_uint_in_range(struct qcc_generator *self, void *data)
 {
     qcc_uint min = ((struct _generator_uint_in_range *)self)->min;
     qcc_uint max = ((struct _generator_uint_in_range *)self)->max;
 
     qcc_uint result;
-    qcc_context_rand(ctx, &result, sizeof(result));
+    qcc_context_rand(self->context, &result, sizeof(result));
     qcc_uint range = max - min + 1;
     if (range) result = result % range + min;
 
@@ -49,6 +48,7 @@ static struct qcc_generator *_gen_uint_in_range(struct qcc_context *ctx,
                                                 qcc_uint max)
 {
     QCC_ARENA_POD(ctx->arena, _generator_uint_in_range, res);
+    res->base.context = ctx;
     res->base.type_size = size;
     res->base.generate = _generate_uint_in_range;
     res->min = _limit_uint(size, min);
@@ -122,10 +122,35 @@ struct qcc_generator *qcc_gen_uint_any(struct qcc_context *ctx, size_t size)
     return qcc_gen_uint_in_range(ctx, size, 0, QCC_UINT_MAX);
 }
 
-qcc_uint qcc_generate_uint(struct qcc_generator *self, struct qcc_context *ctx)
+qcc_uint qcc_generate_uint(struct qcc_generator *gen)
 {
-    qcc_uint result;
-    assert(self->type_size == sizeof(result));
-    qcc_generate(self, ctx, &result);
-    return result;
+    switch (gen->type_size)
+    {
+    case 1:
+    {
+        uint8_t res;
+        qcc_generate(gen, &res);
+        return res;
+    }
+    case 2:
+    {
+        uint16_t res;
+        qcc_generate(gen, &res);
+        return res;
+    }
+    case 4:
+    {
+        uint32_t res;
+        qcc_generate(gen, &res);
+        return res;
+    }
+    case 8:
+    {
+        uint64_t res;
+        qcc_generate(gen, &res);
+        return res;
+    }
+    }
+    /* TODO: Raise error */
+    return 0;
 }

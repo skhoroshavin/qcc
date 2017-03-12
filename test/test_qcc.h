@@ -33,7 +33,9 @@ struct qcc_context *qcc_rand_context(struct qcc_context *ctx);
 
 void *qcc_rand_ptr(struct qcc_context *ctx)
 {
-    return (void *)(size_t)qcc_rand_uint(ctx, not_equal_to, 0);
+    void *ptr;
+    qcc_generate(qcc_gen_uint_any(ctx, sizeof(ptr)), &ptr);
+    return ptr;
 }
 
 struct qcc_arena *qcc_rand_arena(struct qcc_context *ctx, unsigned min_size)

@@ -24,16 +24,14 @@ struct qcc_generator *qcc_gen_uint_not_equal_to(struct qcc_context *ctx,
                                                 size_t size, qcc_uint value);
 struct qcc_generator *qcc_gen_uint_any(struct qcc_context *ctx, size_t size);
 
-qcc_uint qcc_generate_uint(struct qcc_generator *self, struct qcc_context *ctx);
+qcc_uint qcc_generate_uint(struct qcc_generator *gen);
 
-#define qcc_rand_uint(ctx, cond, ...)                                          \
-    qcc_generate_uint(                                                         \
-        qcc_gen_uint_##cond(ctx, sizeof(qcc_uint), ##__VA_ARGS__), ctx)
+#define qcc_rand_unsigned(ctx, type, cond, ...)                                \
+    (type) qcc_generate_uint(                                                  \
+        qcc_gen_uint_##cond(ctx, sizeof(type), ##__VA_ARGS__))
 
 #define GIVEN_UNSIGNED(type, name, cond, ...)                                  \
-    type name;                                                                 \
-    qcc_generate(qcc_gen_uint_##cond(_ctx, sizeof(type), ##__VA_ARGS__), _ctx, \
-                 &name);                                                       \
+    type name = qcc_rand_unsigned(_ctx, type, cond, ##__VA_ARGS__);            \
     qcc_context_register_param(_ctx, "%s: %" PRIu64, #name, (uint64_t)name);
 
 #define GIVEN_UNSIGNED_ARRAY(type, name, asize, cond, ...)                     \
@@ -45,8 +43,23 @@ qcc_uint qcc_generate_uint(struct qcc_generator *self, struct qcc_context *ctx);
     qcc_generate(qcc_gen_array_of(                                             \
                      _ctx, qcc_array_##asize,                                  \
                      qcc_gen_uint_##cond(_ctx, sizeof(type), ##__VA_ARGS__)),  \
-                 _ctx, &name);                                                 \
+                 &name);                                                       \
     qcc_context_register_param(_ctx, "%s_size: %zu", #name, name.size);
+
+#define qcc_rand_uint(ctx, cond, ...)                                          \
+    qcc_rand_unsigned(ctx, unsigned, cond, ##__VA_ARGS__)
+
+#define qcc_rand_uint8(ctx, cond, ...)                                         \
+    qcc_rand_unsigned(ctx, uint8_t, cond, ##__VA_ARGS__)
+
+#define qcc_rand_uint16(ctx, cond, ...)                                        \
+    qcc_rand_unsigned(ctx, uint16_t, cond, ##__VA_ARGS__)
+
+#define qcc_rand_uint32(ctx, cond, ...)                                        \
+    qcc_rand_unsigned(ctx, uint32_t, cond, ##__VA_ARGS__)
+
+#define qcc_rand_uint64(ctx, cond, ...)                                        \
+    qcc_rand_unsigned(ctx, uint64_t, cond, ##__VA_ARGS__)
 
 #define GIVEN_UINT(name, cond, ...)                                            \
     GIVEN_UNSIGNED(unsigned, name, cond, ##__VA_ARGS__);
