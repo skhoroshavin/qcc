@@ -4,8 +4,10 @@
 #include "qcc.h"
 
 void *qcc_rand_ptr(struct qcc_context *ctx);
-struct qcc_arena *qcc_rand_arena(struct qcc_context *ctx, unsigned min_size);
+struct qcc_arena *qcc_rand_arena(struct qcc_context *ctx);
 struct qcc_engine *qcc_rand_engine(struct qcc_context *ctx);
+struct qcc_interval_builder *qcc_rand_interval_builder(struct qcc_context *ctx);
+struct qcc_stream *qcc_rand_stream(struct qcc_context *ctx);
 struct qcc_context *qcc_rand_context(struct qcc_context *ctx);
 
 #define GIVEN_PTR(name)                                                        \
@@ -13,8 +15,7 @@ struct qcc_context *qcc_rand_context(struct qcc_context *ctx);
     qcc_context_register_param(_ctx, "%s: 0x%zx", #name, (size_t)name);
 
 #define GIVEN_ARENA(name)                                                      \
-    struct qcc_arena *name =                                                   \
-        qcc_rand_arena(_ctx, 2 * sizeof(struct qcc_arena_object));             \
+    struct qcc_arena *name = qcc_rand_arena(_ctx);                             \
     size_t name##_size = qcc_arena_memory_available(name);                     \
     qcc_context_register_param(_ctx, "%s: qcc_arena %zu bytes", #name,         \
                                name##_size);
@@ -38,9 +39,9 @@ void *qcc_rand_ptr(struct qcc_context *ctx)
     return ptr;
 }
 
-struct qcc_arena *qcc_rand_arena(struct qcc_context *ctx, unsigned min_size)
+struct qcc_arena *qcc_rand_arena(struct qcc_context *ctx)
 {
-    unsigned size = qcc_rand_uint(ctx, in_range, min_size,
+    unsigned size = qcc_rand_uint(ctx, in_range, 8192,
                                   qcc_arena_memory_available(ctx->arena) / 4);
     void *data = qcc_arena_alloc(ctx->arena, size);
 
@@ -58,9 +59,27 @@ struct qcc_engine *qcc_rand_engine(struct qcc_context *ctx)
     return result;
 }
 
+struct qcc_interval_builder *qcc_rand_interval_builder(struct qcc_context *ctx)
+{
+    void *buffer = qcc_arena_alloc(ctx->arena, 1024);
+    QCC_ARENA_POD(ctx->arena, qcc_interval_builder, result);
+    qcc_interval_builder_init(result, buffer, 1024);
+    return result;
+}
+
+struct qcc_stream *qcc_rand_stream(struct qcc_context *ctx)
+{
+    void *buffer = qcc_arena_alloc(ctx->arena, 1024);
+    struct qcc_interval_builder *intervals = qcc_rand_interval_builder(ctx);
+    QCC_ARENA_POD(ctx->arena, qcc_stream, result);
+    qcc_stream_init(result, QCC_STREAM_WRITE, buffer, 1024, intervals);
+    return result;
+}
+
 struct qcc_context *qcc_rand_context(struct qcc_context *ctx)
 {
-    struct qcc_engine *eng = qcc_rand_engine(ctx);
-    QCC_ARENA_OBJ(ctx->arena, qcc_context, result, eng);
+    struct qcc_stream *stream = qcc_rand_stream(ctx);
+    struct qcc_arena *arena = qcc_rand_arena(ctx);
+    QCC_ARENA_OBJ(ctx->arena, qcc_context, result, stream, arena);
     return result;
 }

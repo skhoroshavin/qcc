@@ -3,9 +3,15 @@
 
 #include <assert.h>
 
+/*
+ * Generator
+ */
+
 void qcc_generate(qcc_generator_ptr self, void *data)
 {
+    qcc_stream_begin(self->context->stream);
     self->generate(self, data);
+    qcc_stream_end(self->context->stream);
 }
 
 /*
@@ -25,7 +31,8 @@ static void qcc_generate_value_from(qcc_generator_ptr self, void *data)
     struct qcc_generator_value_from *value_from =
         (struct qcc_generator_value_from *)self;
 
-    size_t index = qcc_context_rand_value(self->context) % value_from->count;
+    size_t index =
+        qcc_stream_read_value(self->context->stream) % value_from->count;
     memcpy(data, value_from->data + index * value_from->stride,
            self->type_size);
 }
@@ -58,8 +65,9 @@ struct qcc_generator_one_of
 static void qcc_generate_one_of(qcc_generator_ptr self, void *data)
 {
     struct qcc_generator_one_of *one_of = (struct qcc_generator_one_of *)self;
-    unsigned index =
-        qcc_context_rand_value(self->context) % one_of->generator_count;
+
+    size_t index =
+        qcc_stream_read_value(self->context->stream) % one_of->generator_count;
     qcc_generate(one_of->generators[index], data);
 }
 

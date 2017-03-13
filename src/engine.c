@@ -1,6 +1,7 @@
 
 #include "engine.h"
 #include "context.h"
+#include <assert.h>
 #include <stdio.h>
 
 static void _log_proc(void *data, const char *msg)
@@ -45,8 +46,16 @@ void qcc_engine_failure(struct qcc_engine *eng, const char *name)
 static enum qcc_test_result
 _run_test_once(struct qcc_engine *eng, const char *name, qcc_test_fn test_fn)
 {
+    struct qcc_interval_builder intervals;
+    char ibuf[65536];
+    qcc_interval_builder_init(&intervals, ibuf, sizeof(ibuf));
+
+    struct qcc_stream stream;
+    char dbuf[65536];
+    qcc_stream_init(&stream, QCC_STREAM_WRITE, dbuf, sizeof(dbuf), &intervals);
+
     struct qcc_context ctx;
-    qcc_context_init(&ctx, eng);
+    qcc_context_init(&ctx, &stream, &eng->arena);
     test_fn(&ctx);
     enum qcc_test_result result = ctx.result;
     if (ctx.result == QCC_TEST_FAIL)
@@ -76,6 +85,8 @@ void qcc_engine_run_test(struct qcc_engine *eng, const char *name,
             return;
         case QCC_TEST_SKIP:
             break;
+        case QCC_TEST_OVERRUN:
+            assert(0 && "Shouldn't get there!");
         }
 
         if (successes == eng->required_successes) break;

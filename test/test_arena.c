@@ -1,5 +1,6 @@
 
 #include "test_qcc.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 TEST(arena_alloc)
@@ -102,22 +103,6 @@ TEST(arena_sprintf)
     ASSERT(qcc_arena_memory_available(arena) == arena_size - expected_size);
 }
 
-TEST(arena_sprintf_out_of_mem)
-{
-    GIVEN_ARENA(arena);
-
-    const char *expected_str = "4294967295 4294967295 4294967295 4294967295 "
-                               "4294967295 4294967295 4294967295 4294967295";
-    const size_t expected_size = strlen(expected_str) + 1;
-    ASSUME(expected_size > arena_size);
-
-    const char *str = qcc_arena_sprintf(arena, "%u %u %u %u %u %u %u %u", -1,
-                                        -1, -1, -1, -1, -1, -1, -1);
-
-    ASSERT(str == 0);
-    ASSERT_UINT(qcc_arena_memory_available(arena), ==, arena_size);
-}
-
 TEST(arena_array)
 {
     GIVEN_ARENA(arena);
@@ -181,7 +166,6 @@ TEST_MAIN()
     RUN_TEST(arena_copy_out_of_mem);
     RUN_TEST(arena_objects);
     RUN_TEST(arena_sprintf);
-    RUN_TEST(arena_sprintf_out_of_mem);
     RUN_TEST(arena_array);
     RUN_TEST(arena_array_out_of_mem);
 }
