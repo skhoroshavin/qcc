@@ -23,9 +23,6 @@ QCC_BEGIN_HEADER
 #define QCC_VPRINTF __attribute__((format_arg(2)))
 #endif /* WIN32 */
 
-#define PP_CONCAT_I(A, B) A##B
-#define PP_CONCAT(A, B) PP_CONCAT_I(A, B)
-
 #ifndef count_of
 #define count_of(a) (sizeof(a) / sizeof(a[0]))
 #endif /* count_of */

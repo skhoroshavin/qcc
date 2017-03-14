@@ -16,8 +16,6 @@ void qcc_context_init(struct qcc_context *ctx, struct qcc_stream *stream,
     ctx->arena = arena;
 }
 
-void qcc_context_done(struct qcc_context *ctx) { qcc_arena_reset(ctx->arena); }
-
 void qcc_context_fail(struct qcc_context *ctx, const char *fmt, ...)
 {
     ctx->result = QCC_TEST_FAIL;

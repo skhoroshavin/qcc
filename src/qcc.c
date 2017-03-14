@@ -18,7 +18,6 @@ int qcc_main(int argc, const char *argv[], qcc_main_fn main_fn)
                    eng.total_tests, eng.failed_tests);
 
     int res = eng.failed_tests;
-    qcc_engine_done(&eng);
 
     return res;
 }

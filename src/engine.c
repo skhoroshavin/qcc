@@ -18,10 +18,9 @@ void qcc_engine_init(struct qcc_engine *eng, void *buffer, size_t buf_size)
     eng->log_proc = _log_proc;
     eng->total_tests = 0;
     eng->failed_tests = 0;
-    qcc_arena_init(&eng->arena, buffer, buf_size);
+    eng->buf_data = buffer;
+    eng->buf_size = buf_size;
 }
-
-void qcc_engine_done(struct qcc_engine *eng) { qcc_arena_done(&eng->arena); }
 
 void qcc_engine_log(struct qcc_engine *eng, const char *fmt, ...)
 {
@@ -54,8 +53,11 @@ _run_test_once(struct qcc_engine *eng, const char *name, qcc_test_fn test_fn)
     char dbuf[65536];
     qcc_stream_init(&stream, QCC_STREAM_WRITE, dbuf, sizeof(dbuf), &intervals);
 
+    struct qcc_arena arena;
+    qcc_arena_init(&arena, eng->buf_data, eng->buf_size);
+
     struct qcc_context ctx;
-    qcc_context_init(&ctx, &stream, &eng->arena);
+    qcc_context_init(&ctx, &stream, &arena);
     test_fn(&ctx);
     enum qcc_test_result result = ctx.result;
     if (ctx.result == QCC_TEST_FAIL)
@@ -66,7 +68,8 @@ _run_test_once(struct qcc_engine *eng, const char *name, qcc_test_fn test_fn)
             qcc_engine_log(eng, "    %s\n", param->value);
         qcc_engine_log(eng, "    %s\n", ctx.error);
     }
-    qcc_context_done(&ctx);
+
+    qcc_arena_done(&arena);
     return result;
 }
 

@@ -113,7 +113,7 @@ qcc_generator_ptr qcc_gen_uint_in_range(struct qcc_context *ctx, size_t size,
 
     if (max - min < 20) return _gen_uint_in_range(ctx, size, min, max);
 
-    qcc_uint avg = min / 2 + max / 2;
+    qcc_uint avg = min + (max - min) / 2;
     return qcc_gen_one_of(ctx, _gen_uint_in_range(ctx, size, min, min + 2),
                           _gen_uint_in_range(ctx, size, max - 2, max),
                           _gen_uint_in_range(ctx, size, avg - 1, avg + 1),

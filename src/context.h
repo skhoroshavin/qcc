@@ -32,7 +32,6 @@ struct qcc_context
 
 void qcc_context_init(struct qcc_context *ctx, struct qcc_stream *stream,
                       struct qcc_arena *arena);
-void qcc_context_done(struct qcc_context *ctx);
 void qcc_context_fail(struct qcc_context *ctx, const char *fmt, ...) QCC_PRINTF;
 void qcc_context_register_param(struct qcc_context *ctx, const char *fmt,
                                 ...) QCC_PRINTF;
