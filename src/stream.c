@@ -28,15 +28,20 @@ void qcc_stream_end(struct qcc_stream *self)
     qcc_interval_builder_end(self->intervals, self->pos);
 }
 
-int qcc_stream_read(struct qcc_stream *self, void *data, size_t size)
+void qcc_stream_read(struct qcc_stream *self, void *data, size_t size)
 {
-    if (self->pos + size > self->size) return 0;
+    if (self->pos + size > self->size)
+    {
+        memset(data, 0, size);
+        self->pos = self->size + 1;
+        return;
+    }
+
     if (self->mode == QCC_STREAM_WRITE)
         for (size_t i = 0; i != size; ++i)
             self->data[self->pos + i] = rand();
     memcpy(data, self->data + self->pos, size);
     self->pos += size;
-    return 1;
 }
 
 unsigned qcc_stream_read_value(struct qcc_stream *self)
@@ -44,4 +49,9 @@ unsigned qcc_stream_read_value(struct qcc_stream *self)
     unsigned result;
     qcc_stream_read(self, &result, sizeof(result));
     return result;
+}
+
+int qcc_stream_is_overrun(struct qcc_stream *self)
+{
+    return self->pos > self->size;
 }

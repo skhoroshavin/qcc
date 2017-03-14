@@ -60,6 +60,7 @@ _run_test_once(struct qcc_engine *eng, const char *name, qcc_test_fn test_fn)
     qcc_context_init(&ctx, &stream, &arena);
     test_fn(&ctx);
     enum qcc_test_result result = ctx.result;
+    if (qcc_stream_is_overrun(&stream)) result = QCC_TEST_OVERRUN;
     if (ctx.result == QCC_TEST_FAIL)
     {
         qcc_engine_failure(eng, name);
@@ -87,9 +88,8 @@ void qcc_engine_run_test(struct qcc_engine *eng, const char *name,
         case QCC_TEST_FAIL:
             return;
         case QCC_TEST_SKIP:
-            break;
         case QCC_TEST_OVERRUN:
-            assert(0 && "Shouldn't get there!");
+            break;
         }
 
         if (successes == eng->required_successes) break;
@@ -104,7 +104,10 @@ void qcc_engine_run_test(struct qcc_engine *eng, const char *name,
 
     ++eng->total_tests;
     if (successes < eng->required_successes)
+    {
+        qcc_engine_log(eng, "%s:\n", name);
         qcc_engine_log(
-            eng, "   Warning: Only %u successful runs out of %u were made\n",
+            eng, "    Warning: Only %u successful runs out of %u were made\n",
             successes, eng->required_successes);
+    }
 }

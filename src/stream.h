@@ -27,7 +27,8 @@ void qcc_stream_init(struct qcc_stream *self, enum qcc_stream_mode mode,
 
 void qcc_stream_begin(struct qcc_stream *self);
 void qcc_stream_end(struct qcc_stream *self);
-int qcc_stream_read(struct qcc_stream *self, void *data, size_t size);
+void qcc_stream_read(struct qcc_stream *self, void *data, size_t size);
 unsigned qcc_stream_read_value(struct qcc_stream *self);
+int qcc_stream_is_overrun(struct qcc_stream *self);
 
 QCC_END_HEADER
