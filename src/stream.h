@@ -15,14 +15,14 @@ struct qcc_stream
 {
     enum qcc_stream_mode mode;
     qcc_uint *data;
-    size_t capacity;
+    size_t size;
 
     size_t pos;
     struct qcc_interval_builder *intervals;
 };
 
 void qcc_stream_init(struct qcc_stream *self, enum qcc_stream_mode mode,
-                     qcc_uint *data, size_t capacity,
+                     qcc_uint *data, size_t size,
                      struct qcc_interval_builder *intervals);
 
 void qcc_stream_begin(struct qcc_stream *self);

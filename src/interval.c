@@ -2,13 +2,12 @@
 #include "interval.h"
 #include <assert.h>
 
-void qcc_interval_builder_init(struct qcc_interval_builder *self, void *buffer,
-                               size_t size)
+void qcc_interval_builder_init(struct qcc_interval_builder *self,
+                               struct qcc_interval *data, size_t size)
 {
-    self->capacity = size / sizeof(struct qcc_interval);
-    self->data = (struct qcc_interval *)buffer;
-    self->data += self->capacity;
-    self->count = 0;
+    self->data = data;
+    self->size = size;
+    self->pos = 0;
     self->depth = 0;
 }
 
@@ -22,13 +21,12 @@ void qcc_interval_builder_begin(struct qcc_interval_builder *self, size_t pos)
 void qcc_interval_builder_end(struct qcc_interval_builder *self, size_t pos)
 {
     assert(self->depth > 0);
-    assert(self->capacity > self->count);
+    assert(self->size > self->pos);
 
     --self->depth;
     if (pos == self->starts[self->depth]) return;
 
-    ++self->count;
-    --self->data;
-    self->data->begin = self->starts[self->depth];
-    self->data->end = pos;
+    self->data[self->pos].begin = self->starts[self->depth];
+    self->data[self->pos].end = pos;
+    ++self->pos;
 }

@@ -49,17 +49,23 @@ struct qcc_arena *qcc_rand_arena(struct qcc_context *ctx)
 
 struct qcc_engine *qcc_rand_engine(struct qcc_context *ctx)
 {
+    const size_t max_log_size = 128;
+    char *log_data = (char *)qcc_arena_alloc(ctx->arena, max_log_size);
+    QCC_ARENA_POD(ctx->arena, qcc_logger, logger);
+    qcc_logger_init(logger, log_data, max_log_size);
+
     const size_t size = 8192;
     void *data = qcc_arena_alloc(ctx->arena, size);
     QCC_ARENA_POD(ctx->arena, qcc_engine, result);
-    qcc_engine_init(result, data, size);
+    qcc_engine_init(result, data, size, logger);
     return result;
 }
 
 struct qcc_interval_builder *qcc_rand_interval_builder(struct qcc_context *ctx)
 {
-    const size_t size = 1024;
-    void *buffer = qcc_arena_alloc(ctx->arena, size);
+    const size_t size = 256;
+    struct qcc_interval *buffer = (struct qcc_interval *)qcc_arena_alloc(
+        ctx->arena, size * sizeof(struct qcc_interval));
     QCC_ARENA_POD(ctx->arena, qcc_interval_builder, result);
     qcc_interval_builder_init(result, buffer, size);
     return result;
@@ -68,7 +74,8 @@ struct qcc_interval_builder *qcc_rand_interval_builder(struct qcc_context *ctx)
 struct qcc_stream *qcc_rand_stream(struct qcc_context *ctx)
 {
     const size_t size = 256;
-    qcc_uint *buffer = qcc_arena_alloc(ctx->arena, size*sizeof(qcc_uint));
+    qcc_uint *buffer =
+        (qcc_uint *)qcc_arena_alloc(ctx->arena, size * sizeof(qcc_uint));
     struct qcc_interval_builder *intervals = qcc_rand_interval_builder(ctx);
     QCC_ARENA_POD(ctx->arena, qcc_stream, result);
     qcc_stream_init(result, QCC_STREAM_WRITE, buffer, size, intervals);

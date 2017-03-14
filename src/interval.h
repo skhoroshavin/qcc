@@ -13,17 +13,16 @@ struct qcc_interval
 
 struct qcc_interval_builder
 {
-    size_t capacity;
-
     struct qcc_interval *data;
-    size_t count;
+    size_t size;
+    size_t pos;
 
     size_t starts[QCC_MAX_INTERVAL_DEPTH];
     size_t depth;
 };
 
-void qcc_interval_builder_init(struct qcc_interval_builder *self, void *buffer,
-                               size_t size);
+void qcc_interval_builder_init(struct qcc_interval_builder *self,
+                               struct qcc_interval *data, size_t size);
 void qcc_interval_builder_begin(struct qcc_interval_builder *self, size_t pos);
 void qcc_interval_builder_end(struct qcc_interval_builder *self, size_t pos);
 

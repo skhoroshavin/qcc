@@ -6,12 +6,12 @@
 #include <stdlib.h>
 
 void qcc_stream_init(struct qcc_stream *self, enum qcc_stream_mode mode,
-                     qcc_uint *data, size_t capacity,
+                     qcc_uint *data, size_t size,
                      struct qcc_interval_builder *intervals)
 {
     self->mode = mode;
     self->data = data;
-    self->capacity = capacity;
+    self->size = size;
     self->pos = 0;
     self->intervals = intervals;
 }
@@ -30,7 +30,7 @@ void qcc_stream_end(struct qcc_stream *self)
 
 qcc_uint qcc_stream_get(struct qcc_stream *self)
 {
-    if (self->pos == self->capacity)
+    if (self->pos == self->size)
     {
         ++self->pos;
         return 0;
@@ -48,5 +48,5 @@ qcc_uint qcc_stream_get(struct qcc_stream *self)
 
 int qcc_stream_is_overrun(struct qcc_stream *self)
 {
-    return self->pos > self->capacity;
+    return self->pos > self->size;
 }
