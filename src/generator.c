@@ -31,8 +31,7 @@ static void qcc_generate_value_from(qcc_generator_ptr self, void *data)
     struct qcc_generator_value_from *value_from =
         (struct qcc_generator_value_from *)self;
 
-    size_t index =
-        qcc_stream_read_value(self->context->stream) % value_from->count;
+    size_t index = qcc_stream_get(self->context->stream) % value_from->count;
     memcpy(data, value_from->data + index * value_from->stride,
            self->type_size);
 }
@@ -67,7 +66,7 @@ static void qcc_generate_one_of(qcc_generator_ptr self, void *data)
     struct qcc_generator_one_of *one_of = (struct qcc_generator_one_of *)self;
 
     size_t index =
-        qcc_stream_read_value(self->context->stream) % one_of->generator_count;
+        qcc_stream_get(self->context->stream) % one_of->generator_count;
     qcc_generate(one_of->generators[index], data);
 }
 

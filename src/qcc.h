@@ -36,7 +36,7 @@ int qcc_main(int argc, const char *argv[], qcc_main_fn main_fn);
 
 #define GIVEN_DATA(name, size)                                                 \
     void *name = qcc_arena_alloc(_ctx->arena, size);                           \
-    qcc_stream_read(_ctx->stream, name, size);
+    memset(name, 0, size);
 
 #define FAIL(fmt, ...)                                                         \
     do                                                                         \

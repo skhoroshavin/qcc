@@ -66,8 +66,7 @@ static void _generate_uint_in_range(qcc_generator_ptr self, void *data)
     qcc_uint min = ((struct _generator_uint_in_range *)self)->min;
     qcc_uint max = ((struct _generator_uint_in_range *)self)->max;
 
-    qcc_uint result;
-    qcc_stream_read(self->context->stream, &result, sizeof(result));
+    qcc_uint result = qcc_stream_get(self->context->stream);
     qcc_uint range = max - min + 1;
     if (range) result = result % range + min;
     *((qcc_uint *)data) = result;

@@ -6,12 +6,12 @@
 #include <stdlib.h>
 
 void qcc_stream_init(struct qcc_stream *self, enum qcc_stream_mode mode,
-                     void *data, size_t size,
+                     qcc_uint *data, size_t capacity,
                      struct qcc_interval_builder *intervals)
 {
     self->mode = mode;
-    self->data = (uint8_t *)data;
-    self->size = size;
+    self->data = data;
+    self->capacity = capacity;
     self->pos = 0;
     self->intervals = intervals;
 }
@@ -28,30 +28,25 @@ void qcc_stream_end(struct qcc_stream *self)
     qcc_interval_builder_end(self->intervals, self->pos);
 }
 
-void qcc_stream_read(struct qcc_stream *self, void *data, size_t size)
+qcc_uint qcc_stream_get(struct qcc_stream *self)
 {
-    if (self->pos + size > self->size)
+    if (self->pos == self->capacity)
     {
-        memset(data, 0, size);
-        self->pos = self->size + 1;
-        return;
+        ++self->pos;
+        return 0;
     }
 
+    qcc_stream_begin(self);
     if (self->mode == QCC_STREAM_WRITE)
-        for (size_t i = 0; i != size; ++i)
-            self->data[self->pos + i] = rand();
-    memcpy(data, self->data + self->pos, size);
-    self->pos += size;
-}
+        self->data[self->pos] = (qcc_uint)rand() + (((qcc_uint)rand()) << 32);
+    qcc_uint result = self->data[self->pos];
+    ++self->pos;
+    qcc_stream_end(self);
 
-unsigned qcc_stream_read_value(struct qcc_stream *self)
-{
-    unsigned result;
-    qcc_stream_read(self, &result, sizeof(result));
     return result;
 }
 
 int qcc_stream_is_overrun(struct qcc_stream *self)
 {
-    return self->pos > self->size;
+    return self->pos > self->capacity;
 }

@@ -67,8 +67,8 @@ struct qcc_interval_builder *qcc_rand_interval_builder(struct qcc_context *ctx)
 
 struct qcc_stream *qcc_rand_stream(struct qcc_context *ctx)
 {
-    const size_t size = 1024;
-    void *buffer = qcc_arena_alloc(ctx->arena, size);
+    const size_t size = 256;
+    qcc_uint *buffer = qcc_arena_alloc(ctx->arena, size*sizeof(qcc_uint));
     struct qcc_interval_builder *intervals = qcc_rand_interval_builder(ctx);
     QCC_ARENA_POD(ctx->arena, qcc_stream, result);
     qcc_stream_init(result, QCC_STREAM_WRITE, buffer, size, intervals);

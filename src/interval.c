@@ -25,9 +25,10 @@ void qcc_interval_builder_end(struct qcc_interval_builder *self, size_t pos)
     assert(self->capacity > self->count);
 
     --self->depth;
-    --self->data;
-    ++self->count;
+    if (pos == self->starts[self->depth]) return;
 
+    ++self->count;
+    --self->data;
     self->data->begin = self->starts[self->depth];
     self->data->end = pos;
 }

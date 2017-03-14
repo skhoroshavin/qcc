@@ -24,7 +24,7 @@ QCC_BEGIN_HEADER
 #endif /* WIN32 */
 
 #ifndef count_of
-#define count_of(a) (sizeof(a) / sizeof(a[0]))
+#define countof(a) (sizeof(a) / sizeof(a[0]))
 #endif /* count_of */
 
 typedef int64_t qcc_int;
