@@ -7,11 +7,11 @@ install:
 script:
   - export CTEST_OUTPUT_ON_FAILURE=1
   - mkdir build-release && cd build-release
-  - cmake -DQCC_MEMCHECK=1 -DCMAKE_BUILD_TYPE=Release ..
+  - cmake -DQCC_VALGRIND=1 -DCMAKE_BUILD_TYPE=Release ..
   - make
   - make test
   - cd ..
   - mkdir build-debug && cd build-debug
-  - cmake -DQCC_MEMCHECK=1 -DCMAKE_BUILD_TYPE=Debug .. 
+  - cmake -DQCC_VALGRIND=1 -DCMAKE_BUILD_TYPE=Debug .. 
   - make
   - make test

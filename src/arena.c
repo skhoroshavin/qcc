@@ -7,7 +7,7 @@
 
 void qcc_arena_init(struct qcc_arena *arena, void *buffer, size_t size)
 {
-    arena->buffer_start = buffer;
+    arena->buffer_start = (uint8_t *)buffer;
     arena->buffer_end = arena->buffer_start + size;
     arena->free_memory = arena->buffer_start;
     arena->objects = (struct qcc_arena_object *)arena->buffer_end;

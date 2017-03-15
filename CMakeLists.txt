@@ -6,7 +6,8 @@ cmake_minimum_required(VERSION 2.8)
 ############################################################
 
 option(QCC_GEN_COVERAGE "Generate tests coverage information" OFF)
-option(QCC_MEMCHECK "Run tests under memory checker (valgrind, etc)" OFF)
+option(QCC_VALGRIND "Run tests under valgrind" OFF)
+option(QCC_SANITIZER "Compile with sanitizer support" OFF)
 
 ############################################################
 # General config
@@ -20,6 +21,14 @@ endif(NOT MSVC)
 if(QCC_GEN_COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
 endif(QCC_GEN_COVERAGE)
+
+if(QCC_VALGRIND)
+    add_definitions(-DQCC_VALGRIND)
+endif(QCC_VALGRIND)
+
+if(QCC_SANITIZER)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+endif(QCC_SANITIZER)
 
 ############################################################
 # qcc
@@ -49,21 +58,21 @@ if(NOT WIN32)
     configure_file(CTestCustom.cmake ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
 endif(NOT WIN32)
 
-if(QCC_MEMCHECK)
+if(QCC_VALGRIND)
     macro(qcc_test test_name)
         add_executable(${test_name} test/${test_name}.c)
         add_dependencies(${test_name} qcc)
         target_link_libraries(${test_name} qcc)
         add_test(${test_name} valgrind --error-exitcode=1 ./${test_name})
     endmacro(qcc_test)
-else(QCC_MEMCHECK)
+else(QCC_VALGRIND)
     macro(qcc_test test_name)
         add_executable(${test_name} test/${test_name}.c)
         add_dependencies(${test_name} qcc)
         target_link_libraries(${test_name} qcc)
         add_test(${test_name} ${test_name})
     endmacro(qcc_test)
-endif(QCC_MEMCHECK)
+endif(QCC_VALGRIND)
 
 qcc_test(test_arena)
 qcc_test(test_common)
