@@ -30,9 +30,9 @@ void qcc_stream_end(struct qcc_stream *self)
 
 qcc_uint qcc_stream_get(struct qcc_stream *self)
 {
-    if (self->pos == self->size)
+    if (self->pos >= self->size)
     {
-        ++self->pos;
+        self->pos = self->size + 1;
         return 0;
     }
 
