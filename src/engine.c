@@ -26,24 +26,39 @@ void qcc_engine_failure(struct qcc_engine *eng)
 
 static enum qcc_test_result
 _run_test_once(struct qcc_engine *eng, const char *name, qcc_test_fn test_fn,
-               struct qcc_stream *stream, struct qcc_logger *logger)
+               enum qcc_stream_mode mode, qcc_uint *test_data,
+               size_t *test_size, struct qcc_interval *interval_data,
+               size_t *interval_size, char *log_data, size_t *log_size)
 {
     struct qcc_arena arena;
     qcc_arena_init(&arena, eng->buf_data, eng->buf_size);
 
+    struct qcc_interval_builder intervals;
+    qcc_interval_builder_init(&intervals, interval_data, *interval_size);
+
+    struct qcc_stream stream;
+    qcc_stream_init(&stream, mode, test_data, *test_size, &intervals);
+
+    struct qcc_logger logger;
+    qcc_logger_init(&logger, log_data, *log_size);
+
     struct qcc_context ctx;
-    qcc_context_init(&ctx, stream, &arena);
+    qcc_context_init(&ctx, &stream, &arena);
     test_fn(&ctx);
     enum qcc_test_result result = ctx.result;
-    if (qcc_stream_is_overrun(stream)) result = QCC_TEST_OVERRUN;
+    if (qcc_stream_is_overrun(&stream)) result = QCC_TEST_OVERRUN;
     if (result == QCC_TEST_FAIL)
     {
-        qcc_logger_printf(logger, "%s: FAILED\n", name);
+        qcc_logger_printf(&logger, "%s: FAILED\n", name);
         for (struct qcc_test_param *param = ctx.param; param;
              param = param->next)
-            qcc_logger_printf(logger, "    %s\n", param->value);
-        qcc_logger_printf(logger, "    %s\n", ctx.error);
+            qcc_logger_printf(&logger, "    %s\n", param->value);
+        qcc_logger_printf(&logger, "    %s\n", ctx.error);
     }
+
+    *interval_size = intervals.pos;
+    *test_size = stream.pos;
+    *log_size = logger.log_pos;
 
     qcc_arena_done(&arena);
     return result;
@@ -132,27 +147,20 @@ static enum qcc_test_result _run_test_and_shrink(struct qcc_engine *eng,
         _stream_skip_interval, _stream_zero_interval, _stream_sort_interval,
         _stream_halve_interval, _stream_dec_interval};
 
-    struct qcc_interval ibuf[1024];
     qcc_uint dbuf[1024];
+    struct qcc_interval ibuf[1024];
     char lbuf[65536];
-    size_t ibuf_size = countof(ibuf);
+
     size_t dbuf_size = countof(dbuf);
-
-    struct qcc_interval_builder intervals;
-    struct qcc_stream stream;
-    struct qcc_logger logger;
-
-    qcc_interval_builder_init(&intervals, ibuf, ibuf_size);
-    qcc_stream_init(&stream, QCC_STREAM_WRITE, dbuf, dbuf_size, &intervals);
-    qcc_logger_init(&logger, lbuf, sizeof(lbuf));
+    size_t ibuf_size = countof(ibuf);
+    size_t lbuf_size = countof(lbuf);
 
     enum qcc_test_result result =
-        _run_test_once(eng, name, test_fn, &stream, &logger);
+        _run_test_once(eng, name, test_fn, QCC_STREAM_WRITE, dbuf, &dbuf_size,
+                       ibuf, &ibuf_size, lbuf, &lbuf_size);
     if (result != QCC_TEST_FAIL) return result;
 
     qcc_engine_failure(eng);
-    ibuf_size = intervals.pos;
-    dbuf_size = stream.pos;
 
     while (1)
     {
@@ -166,35 +174,25 @@ static enum qcc_test_result _run_test_and_shrink(struct qcc_engine *eng,
                 size_t end = ibuf[i].end;
                 assert(begin < end);
 
-                struct qcc_interval tmp_ibuf[1024];
                 qcc_uint tmp_dbuf[1024];
+                struct qcc_interval tmp_ibuf[1024];
                 char tmp_lbuf[65536];
-                size_t tmp_ibuf_size = countof(ibuf);
+
                 size_t tmp_dbuf_size =
                     try_shrink[num](tmp_dbuf, dbuf, dbuf_size, begin, end);
                 if (tmp_dbuf_size > dbuf_size) continue;
+                size_t tmp_ibuf_size = countof(tmp_ibuf);
+                size_t tmp_lbuf_size = countof(tmp_lbuf);
 
-                struct qcc_interval_builder tmp_intervals;
-                struct qcc_stream tmp_stream;
-                struct qcc_logger tmp_logger;
-
-                qcc_interval_builder_init(&tmp_intervals, tmp_ibuf,
-                                          tmp_ibuf_size);
-                qcc_stream_init(&tmp_stream, QCC_STREAM_READ, tmp_dbuf,
-                                tmp_dbuf_size, &tmp_intervals);
-                qcc_logger_init(&tmp_logger, tmp_lbuf, sizeof(tmp_lbuf));
-
-                if (_run_test_once(eng, name, test_fn, &tmp_stream,
-                                   &tmp_logger) == QCC_TEST_FAIL)
+                if (_run_test_once(eng, name, test_fn, QCC_STREAM_READ,
+                                   tmp_dbuf, &tmp_dbuf_size, tmp_ibuf,
+                                   &tmp_ibuf_size, tmp_lbuf,
+                                   &tmp_lbuf_size) == QCC_TEST_FAIL)
                 {
                     found_interesting = 1;
 
-                    ibuf_size = tmp_intervals.pos;
                     memcpy(ibuf, tmp_ibuf, ibuf_size * sizeof(ibuf[0]));
-
-                    dbuf_size = tmp_dbuf_size;
                     memcpy(dbuf, tmp_dbuf, dbuf_size * sizeof(dbuf[0]));
-
                     strncpy(lbuf, tmp_lbuf, sizeof(lbuf));
                     break;
                 }

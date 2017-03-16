@@ -1,6 +1,7 @@
 
 #include "interval.h"
 #include <assert.h>
+#include <memory.h>
 
 void qcc_interval_builder_init(struct qcc_interval_builder *self,
                                struct qcc_interval *data, size_t size)
@@ -26,7 +27,10 @@ void qcc_interval_builder_end(struct qcc_interval_builder *self, size_t pos)
     --self->depth;
     if (pos == self->starts[self->depth]) return;
 
-    self->data[self->pos].begin = self->starts[self->depth];
-    self->data[self->pos].end = pos;
+    struct qcc_interval *interval = self->data + self->pos;
+    interval->begin = self->starts[self->depth];
+    interval->end = pos;
+    if (self->pos && (memcmp(interval - 1, interval, sizeof(*interval)) == 0))
+        return;
     ++self->pos;
 }

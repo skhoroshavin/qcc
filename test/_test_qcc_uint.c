@@ -11,15 +11,15 @@ TEST_P(uint_limits, test_t)
     ASSERT_UINT(value, <=, qcc_uint_max(sizeof(test_t)));
 }
 
-// TEST_P(uint_gen_large, test_t)
-//{
-//    GIVEN_CONTEXT(ctx);
+TEST_P(uint_gen_large, test_t)
+{
+    GIVEN_CONTEXT(ctx);
 
-//    const qcc_uint limit = qcc_uint_max(sizeof(test_t)) >> 4;
-//    for (size_t i = 0; i < 100; ++i)
-//        if (qcc_rand_unsigned(ctx, test_t, any) > limit) return;
-//    FAIL("Generated uints are not large enough");
-//}
+    const qcc_uint limit = qcc_uint_max(sizeof(test_t)) >> 4;
+    for (size_t i = 0; i < 100; ++i)
+        if (qcc_rand_unsigned(ctx, test_t, any) > limit) return;
+    FAIL("Generated uints are not large enough");
+}
 
 TEST_P(generate_uint, test_t)
 {
@@ -122,7 +122,7 @@ TEST_P(gen_uint_fixed_size_array, test_t)
 TEST_GROUP_P(qcc_uint, test_t)
 {
     RUN_TEST_P(uint_limits, test_t);
-    // RUN_TEST_P(uint_gen_large, test_t);
+    RUN_TEST_P(uint_gen_large, test_t);
     RUN_TEST_P(generate_uint, test_t);
 
     RUN_TEST_P(gen_uint_from_array, test_t);
