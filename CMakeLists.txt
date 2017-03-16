@@ -7,7 +7,8 @@ cmake_minimum_required(VERSION 2.8)
 
 option(QCC_GEN_COVERAGE "Generate tests coverage information" OFF)
 option(QCC_VALGRIND "Run tests under valgrind" OFF)
-option(QCC_SANITIZER "Compile with sanitizer support" OFF)
+option(QCC_SAN_ADDRESS "Compile with address sanitizer support" OFF)
+option(QCC_SAN_MEMORY "Compile with memory sanitizer support" OFF)
 
 ############################################################
 # General config
@@ -24,11 +25,16 @@ endif(QCC_GEN_COVERAGE)
 
 if(QCC_VALGRIND)
     add_definitions(-DQCC_VALGRIND)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
 endif(QCC_VALGRIND)
 
-if(QCC_SANITIZER)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
-endif(QCC_SANITIZER)
+if(QCC_SAN_ADDRESS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fno-omit-frame-pointer -g")
+endif(QCC_SAN_ADDRESS)
+
+if(QCC_SAN_MEMORY)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=memory -fsanitize-memory-track-origins -fno-omit-frame-pointer -g")
+endif(QCC_SAN_MEMORY)
 
 ############################################################
 # qcc
