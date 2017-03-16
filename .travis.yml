@@ -2,16 +2,26 @@ language: c
 
 install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y -qq lcov curl valgrind cppcheck
+  - sudo apt-get install -y -qq lcov curl valgrind
+
+matrix:
+  include:
+  - compiler: gcc
+    env: QCC_BUILD=Debug QCC_VALGRIND=1 QCC_SANITIZER=0
+  - compiler: gcc
+    env: QCC_BUILD=Release QCC_VALGRIND=1 QCC_SANITIZER=0
+  - compiler: clang
+    env: QCC_BUILD=Debug QCC_VALGRIND=1 QCC_SANITIZER=0
+  - compiler: clang
+    env: QCC_BUILD=Release QCC_VALGRIND=1 QCC_SANITIZER=0
+  - compiler: clang
+    env: QCC_BUILD=Debug QCC_VALGRIND=0 QCC_SANITIZER=1
+  - compiler: clang
+    env: QCC_BUILD=Release QCC_VALGRIND=0 QCC_SANITIZER=1
 
 script:
   - export CTEST_OUTPUT_ON_FAILURE=1
-  - mkdir build-release && cd build-release
-  - cmake -DQCC_VALGRIND=1 -DCMAKE_BUILD_TYPE=Release ..
-  - make
-  - make test
-  - cd ..
-  - mkdir build-debug && cd build-debug
-  - cmake -DQCC_VALGRIND=1 -DCMAKE_BUILD_TYPE=Debug .. 
+  - mkdir build && cd build
+  - cmake -DQCC_VALGRIND=$QCC_VALGRIND -DQCC_SANITIZER=$QCC_SANITIZER -DCMAKE_BUILD_TYPE=$QCC_BUILD ..
   - make
   - make test
