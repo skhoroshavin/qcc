@@ -14,20 +14,13 @@ enum qcc_test_result
     QCC_TEST_OVERRUN
 };
 
-struct qcc_test_param
-{
-    const char *value;
-    struct qcc_test_param *next;
-};
-
 struct qcc_context
 {
     enum qcc_test_result result;
     const char *error;
     struct qcc_stream *stream;
-    struct qcc_test_param *param;
-    struct qcc_test_param *last_param;
     struct qcc_arena *arena;
+    struct qcc_logger logger;
 };
 
 void qcc_context_init(struct qcc_context *ctx, struct qcc_stream *stream,

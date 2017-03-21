@@ -56,11 +56,11 @@ qcc_uint qcc_generate_uint(qcc_generator_ptr gen);
 #define GIVEN_UINT_ARRAY(name, asize, cond, ...)                               \
     GIVEN_UNSIGNED_ARRAY(unsigned, name, asize, cond, ##__VA_ARGS__)
 
-#define ASSERT_UINT(got, cond, exp)                                            \
+#define ASSERT_UNSIGNED(got, cond, exp)                                        \
     do                                                                         \
     {                                                                          \
-        qcc_uint got_val = got;                                                \
-        qcc_uint exp_val = exp;                                                \
+        qcc_uint got_val = (qcc_uint)got;                                      \
+        qcc_uint exp_val = (qcc_uint)exp;                                      \
         if (!(got_val cond exp_val))                                           \
         {                                                                      \
             qcc_context_fail(_ctx, "Assertion \"%s %s %s\" (%" PRIu64          \

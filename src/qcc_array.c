@@ -50,7 +50,7 @@ static void qcc_generate_array_of(qcc_generator_ptr self, void *data)
 
     while (array->size < array_of->size.max)
     {
-        if ((qcc_stream_get(self->context->stream) & 0x3) == 0) break;
+        if (qcc_stream_get(self->context->stream) % 4 == 0) break;
         qcc_generate(item_gen, item);
         item += item_gen->type_size;
         ++array->size;

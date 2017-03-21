@@ -123,7 +123,7 @@ TEST(arena_array)
             void *ptr =
                 qcc_arena_append_array(arena, test.data + i, sizeof(unsigned));
             ASSERT(ptr);
-            ASSERT_UINT(*((unsigned *)ptr), ==, test.data[i]);
+            ASSERT_UNSIGNED(*((unsigned *)ptr), ==, test.data[i]);
         }
     }
 
@@ -145,16 +145,16 @@ TEST(arena_array_out_of_mem)
     void *ptr_good = qcc_arena_append_array(arena, test, alloc_size_good);
     ASSERT(ptr_good);
     ASSERT_MEM_EQ(ptr_good, test, alloc_size_good);
-    ASSERT_UINT(qcc_arena_memory_available(arena), ==, arena_size);
+    ASSERT_UNSIGNED(qcc_arena_memory_available(arena), ==, arena_size);
 
     void *ptr_fail = qcc_arena_append_array(arena, 0, alloc_size_fail);
     ASSERT(!ptr_fail);
-    ASSERT_UINT(qcc_arena_memory_available(arena), ==, arena_size);
+    ASSERT_UNSIGNED(qcc_arena_memory_available(arena), ==, arena_size);
 
     void *ptr_end = qcc_arena_end_array(arena);
     ASSERT(ptr_end);
     ASSERT_MEM_EQ(ptr_end, test, alloc_size_good);
-    ASSERT_UINT(qcc_arena_memory_available(arena), ==,
+    ASSERT_UNSIGNED(qcc_arena_memory_available(arena), ==,
                 arena_size - alloc_size_good);
 }
 
